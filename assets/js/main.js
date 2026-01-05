@@ -61,8 +61,7 @@
         return;
       }
 
-      // TROQUE para o número oficial do João (DDD + número, somente dígitos)
-      const WHATSAPP_NUMBER = "5531999999999";
+      const WHATSAPP_NUMBER = "5531987415012";
 
       const linhas = [
         "Olá! Quero solicitar um orçamento de paisagismo.",
