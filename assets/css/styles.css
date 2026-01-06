@@ -387,6 +387,9 @@ textarea{ min-height:120px; resize:vertical; }
   justify-content:space-between;
   flex-wrap:wrap;
 }
+.footer-copy{
+  text-align:center
+}
 .footer a{
   color:var(--muted);
   text-decoration:underline;
