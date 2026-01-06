@@ -429,16 +429,16 @@ textarea{ min-height:120px; resize:vertical; }
   z-index: 999;
   overscroll-behavior: contain; /* impede vazar scroll para o fundo */
 }
-.modal-project{
-  position: fixed;
-  inset: 0;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  background: rgba(0,0,0,.65);
+
+.modal.open{ 
+  display:flex; 
+overflow: hidden;
 }
-.modal.open{ display:flex; }
+.modal-inner--project{
+  max-height: 92vh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
 .post-content{
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -785,11 +785,30 @@ body.modal-open{
   align-self:flex-end;          /* garante canto inferior */
   white-space:nowrap;
 }
+/* o container interno do modal precisa ser "relative" */
+.modal-inner--project{
+  position: relative;
+}
+
+/* área de conteúdo do modal precisa permitir scroll interno */
+.modal-inner--project{
+  max-height: 92vh;
+  overflow: auto;
+}
+
+/* botões grudados à direita */
 .project-share{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin: 8px 0 14px;
+  position: sticky;
+  bottom: 14px;
+  margin-left: auto;     /* joga para a direita */
+  width: fit-content;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding-top: 10px;
+
+  /* opcional: fundo pra não misturar com texto */
+  background: linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,.7), rgba(255,255,255,0));
 }
 
 .project-share__btn{

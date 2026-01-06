@@ -55,7 +55,7 @@
 </section>
 
 <!-- MODAL (fora do grid) -->
-<div id="projectModal" class="modal-project" aria-hidden="true">
+<div id="projectModal" class="modal" aria-hidden="true">
   <button class="modal-close" type="button" aria-label="Fechar">✕</button>
 
   <div class="modal-inner modal-inner--project">
@@ -333,9 +333,13 @@ function openModal(project){
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
 
   // impede scroll “vazar” quando estiver no fundo cinza (desktop)
-  modal?.addEventListener("wheel", (e) => { if (e.target === modal) e.preventDefault(); }, { passive:false });
-  modal?.addEventListener("touchmove", (e) => { if (e.target === modal) e.preventDefault(); }, { passive:false });
+  modal?.addEventListener("wheel", (e) => {
+  if (e.target === modal) e.preventDefault();
+}, { passive:false });
 
+modal?.addEventListener("touchmove", (e) => {
+  if (e.target === modal) e.preventDefault();
+}, { passive:false });
   prRange?.addEventListener("input", (e) => setCompare(e.target.value));
 
   function openBySlug(slug){
