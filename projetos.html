@@ -152,6 +152,43 @@
   let projects = [];
   let scrollY = 0;
 
+  function isAbsoluteUrl(v){
+  return /^https?:\/\//i.test(String(v || "").trim());
+}
+
+function isImageLikeUrl(v){
+  // aceita .jpg .jpeg .png .webp .gif .avif .svg (mesmo com ?query)
+  return /\.(jpe?g|png|webp|gif|avif|svg)(\?.*)?$/i.test(String(v || "").trim());
+}
+
+function getRepoBaseUrl(){
+  // Preferível: define seu repo base explicitamente (mais robusto)
+  // Ajuste aqui se mudar o repo:
+  return "https://lucassousao.github.io/verdeTomPaisagismo/";
+}
+
+/**
+ * Aceita:
+ * - URL absoluta: https://site.com/img.jpg (ou com ?v=1)
+ * - caminho do repo: assets/images/x.webp | /assets/images/x.webp | ./assets/images/x.webp
+ * Retorna URL resolvida e pronta para <img src="">
+ */
+function resolveImageSrc(input){
+  const raw = String(input || "").trim();
+  if (!raw) return "";
+
+  // URL absoluta
+  if (isAbsoluteUrl(raw)) {
+    // se for um link absoluto que termina com .jpg/.png/... -> usa direto
+    // mesmo que não termine, ainda pode ser imagem (CDN), então também aceita
+    return raw;
+  }
+
+  // Caminho relativo do repo
+  const cleaned = raw.replace(/^\.?\//, ""); // remove "./" ou "/" no início
+  return getRepoBaseUrl() + cleaned;
+
+  
   function lockBodyScroll(){
     scrollY = window.scrollY || 0;
     document.body.classList.add("modal-open");
@@ -280,8 +317,9 @@ function openModal(project){
   history.pushState(null, "", `#${encodeURIComponent(slug)}`);
 
   prTitle.textContent = project.titulo || "";
-  prAfter.src = project.imagemDepoisUrl || "";
-  prBefore.src = project.imagemAntesUrl || "";
+prAfter.src  = resolveImageSrc(project.imagemDepoisUrl);
+prBefore.src = resolveImageSrc(project.imagemAntesUrl);
+
 
   prPedido.textContent = project.pedido || "";
   prEscopo.textContent = project.escopo || "";
@@ -372,8 +410,8 @@ modal?.addEventListener("touchmove", (e) => {
       return `
         <article class="card project-card" data-idx="${idx}" data-slug="${slug}" role="button" tabindex="0">
           <div class="project-card__media">
-            <img class="img-after" src="${p.imagemDepoisUrl || ""}" alt="${p.titulo ? `Depois - ${p.titulo}` : "Depois"}" loading="lazy">
-            <img class="img-before" src="${p.imagemAntesUrl || ""}" alt="${p.titulo ? `Antes - ${p.titulo}` : "Antes"}" loading="lazy">
+            <img class="img-after" src="${resolveImageSrc(p.imagemDepoisUrl)}" alt="${p.titulo ? `Depois - ${p.titulo}` : "Depois"}" loading="lazy">
+            <img class="img-before" src="${resolveImageSrc(p.imagemAntesUrl)}" alt="${p.titulo ? `Antes - ${p.titulo}` : "Antes"}" loading="lazy">
           </div>
           <div class="project-card__body">
             <h3>${p.titulo || ""}</h3>

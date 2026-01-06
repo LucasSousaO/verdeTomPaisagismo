@@ -225,7 +225,7 @@ function unlockBodyScroll(){
     pmDate.textContent = post.data || "";
 
     if (post.imagemUrl){
-      pmImage.src = post.imagemUrl;
+      pmImage.src = resolveImageSrc(post.imagemUrl);
       pmImage.alt = post.titulo || "Imagem do post";
       pmImage.style.display = "block";
     } else {
@@ -233,7 +233,7 @@ function unlockBodyScroll(){
     }
 
     if (post.autorFotoUrl){
-      pmAuthorPhoto.src = post.autorFotoUrl;
+      pmAuthorPhoto.src =  resolveImageSrc(post.autorFotoUrl); || "https://static.wixstatic.com/media/0f9e1a_1308865ec7204a58948ef759065c86b7%7Emv2.jpg/v1/fill/w_64,h_64,al_c,q_80,enc_avif,quality_auto/0f9e1a_1308865ec7204a58948ef759065c86b7%7Emv2.jpg";
       pmAuthorPhoto.alt = post.autor || "Autor";
       pmAuthorPhoto.style.display = "block";
     } else {
@@ -323,7 +323,7 @@ modal.addEventListener("touchmove", (e) => {
       return `
         <article class="card blog-card" data-post-index="${idx}" data-slug="${slug}" role="button" tabindex="0">
           <div class="blog-card__image">
-            ${p.imagemUrl ? `<img src="${p.imagemUrl}" alt="${p.titulo || ""}">` : ""}
+            ${p.imagemUrl ? `<img src="${resolveImageSrc(p.imagemUrl)}" alt="${p.titulo || ""}">` : ""}
           </div>
 
           <div class="blog-card__body">
@@ -333,7 +333,7 @@ modal.addEventListener("touchmove", (e) => {
 
             <div class="blog-card__meta">
               ${p.autorFotoUrl
-                ? `<img class="blog-card__avatar" src="${p.autorFotoUrl}" alt="${p.autor || ""}">`
+                ? `<img class="blog-card__avatar" src="${resolveImageSrc(p.autorFotoUrl)}" alt="${p.autor || ""}">`
                 : `<div class="blog-card__avatar"></div>`
               }
               <div class="blog-card__meta-text">
