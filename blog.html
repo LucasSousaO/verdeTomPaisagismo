@@ -77,27 +77,34 @@
     <h1>Blog</h1>
     <div id="blogGrid" class="grid-3"></div>
 
-      <div id="postModal" class="modal" aria-hidden="true">
+<div id="postModal" class="modal" aria-hidden="true">
   <button class="modal-close" type="button" aria-label="Fechar">✕</button>
+
   <div class="modal-inner">
     <div class="post-modal">
-      <img id="pmImage" class="post-modal__image" alt="">
-      <div class="post-modal__content">
-        <h2 id="pmTitle"></h2>
 
-        <div class="post-modal__meta">
-          <img id="pmAuthorPhoto" class="post-modal__author-photo" alt="">
-          <div>
-            <div id="pmAuthor" class="post-modal__author"></div>
-            <div id="pmDate" class="post-modal__date small"></div>
+      <div class="post-hero">
+        <img id="pmImage" class="post-hero__img" alt="">
+      </div>
+
+      <div class="post-content">
+        <h2 id="pmTitle" class="post-title"></h2>
+
+        <div class="post-meta">
+          <img id="pmAuthorPhoto" class="post-meta__photo" alt="">
+          <div class="post-meta__text">
+            <div id="pmAuthor" class="post-meta__author"></div>
+            <div id="pmDate" class="post-meta__date small"></div>
           </div>
         </div>
 
-        <div id="pmBody" class="post-modal__body"></div>
+        <div id="pmBody" class="post-body"></div>
       </div>
+
     </div>
   </div>
 </div>
+
   </div>
   
 </section>
