@@ -71,6 +71,35 @@
         </article>
       </div>
     </div>
+
+    <section class="section">
+  <div class="container">
+    <h1>Blog</h1>
+    <div id="blogGrid" class="grid-3"></div>
+  </div>
+</section>
+
+<script>
+(async function(){
+  const ENDPOINT = "https://script.google.com/macros/s/AKfycbwwVbHqG357XSW6RXH9zmBgiboF-935npZuCuugCYxuEvcyHrZEISo9KV0taW8bCf2A/exec";
+  const res = await fetch(ENDPOINT);
+  const data = await res.json();
+
+  const grid = document.getElementById("blogGrid");
+  grid.innerHTML = data.posts.map(p => `
+    <article class="card">
+      <img src="${p.imagemUrl}" alt="${p.titulo}" style="border-radius:12px; margin-bottom:12px;">
+      <h3 style="margin:0 0 8px;">${p.titulo}</h3>
+      <p class="small" style="margin:0 0 14px;">${p.textoCentral}</p>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <img src="${p.autorFotoUrl}" alt="${p.autor}" style="width:34px;height:34px;border-radius:999px;object-fit:cover;">
+        <span class="small">${p.autor}</span>
+      </div>
+    </article>
+  `).join("");
+})();
+</script>
+
   </main>
 
 <footer class="site-footer">
