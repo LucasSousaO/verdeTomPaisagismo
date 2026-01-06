@@ -388,10 +388,10 @@ textarea{ min-height:120px; resize:vertical; }
   flex-wrap:wrap;
 }
 .footer-copy{
-  text-align:center
+  text-align:center;
 }
 .footer-main{
-  text-align:center
+  text-align:center;
 }
 .footer a{
   color:var(--muted);
