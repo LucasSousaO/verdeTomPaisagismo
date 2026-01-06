@@ -21,20 +21,27 @@
 </head>
 
 <body>
-<header class="site-header">
+ <header class="site-header">
   <div class="header-inner">
-    <a href="/verdeTomPaisagismo" class="logo">
+    <a href="/verdeTomPaisagismo" class="logo" aria-label="Voltar para a Home">
       <img src="assets/images/logo.webp" alt="Verde Tom Paisagismo">
     </a>
 
-    <nav class="main-nav">
+    <!-- Botão do menu (aparece só no mobile) -->
+<button class="menu-btn" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
+  <span></span>
+  <span></span>
+  <span></span>
+  <span class="menu-label"></span>
+</button>
+
+    <nav class="main-nav" id="mainNav" aria-label="Menu principal">
       <a href="trabalhos.html">projetos</a>
       <a href="atuacao.html">atuação</a>
       <a href="sobre.html">sobre</a>
       <a href="blog.html">blog</a>
       <a href="contato.html">contato</a>
     </nav>
-  <a class="cta" href="contato.html">Solicitar orçamento</a>
   </div>
 </header>
 
