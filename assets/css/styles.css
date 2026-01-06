@@ -115,21 +115,22 @@ img{ max-width:100%; height:auto; display:block; }
 
 /* Hamburger */
 .menu-btn{
-  display:none; /* aparece no mobile */
-  width:44px;
-  height:44px;
-  border:1px solid transparent;
-  background:transparent;
-  border-radius:12px;
-  padding:10px;
-  cursor:pointer;
+  display:none;
+  width: 48px;      /* área de toque maior */
+  height: 48px;
+  border: 1px solid var(--line);  /* cria contorno sutil */
+  background: rgba(255,255,255,.9);
+  border-radius: 14px;
+  padding: 12px;
+  cursor: pointer;
 }
+
 .menu-btn span{
   display:block;
-  height:2px;
-  background:#1f3d2b;
-  margin:6px 0;
-  border-radius:2px;
+  height: 2.5px;     /* linhas mais grossas */
+  background: #163224; /* verde mais escuro (contraste) */
+  margin: 7px 0;
+  border-radius: 2px;
 }
 
 /* =========================
@@ -432,6 +433,12 @@ textarea{ min-height:120px; resize:vertical; }
     bottom: 16px;
     padding: 12px 18px;
     font-size: 0.9rem;
+  }
+    .logo img{
+    height: 48px;   /* antes 40px */
+  }
+  .header-inner{
+    padding: 12px 16px; /* antes 18px + var(--pad) */
   }
 
   /* Mobile menu */
