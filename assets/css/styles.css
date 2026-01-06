@@ -643,6 +643,7 @@ body.modal-open{
   border:1px solid var(--line);
   border-radius:var(--radius);
   padding:16px;
+  height: 100%;
 }
 
 .contact-gallery h3{
@@ -650,18 +651,22 @@ body.modal-open{
   font-size:1.1rem;
 }
 
+/* GRID FLUIDO */
 .gallery-grid{
   display:grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap:10px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap:12px;
 }
 
+/* IMAGENS OCUPAM TODO O CARD */
 .gallery-grid img{
   width:100%;
-  aspect-ratio: 1 / 1;
+  height:100%;
+  aspect-ratio: 1 / 1; /* mantém quadrado */
   object-fit:cover;
   border-radius:12px;
   border:1px solid var(--line);
+  display:block;
 }
 
 /* telas grandes → mais colunas */
