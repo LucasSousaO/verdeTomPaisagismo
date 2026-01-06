@@ -235,14 +235,14 @@
     }
 
     pmBody.textContent = post.conteudo || post.textoCentral || "";
-    document.body.style.overflow = "hidden";
+    document.body.classList.add("modal-open");
   }
 
   function closeModal(){
     if(!modal) return;
     modal.classList.remove("open");
     modal.setAttribute("aria-hidden", "true");
-    document.body.style.overflow = "";
+    document.body.classList.remove("modal-open");
   }
 
   btnClose?.addEventListener("click", closeModal);
