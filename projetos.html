@@ -49,7 +49,7 @@
     <section class="section">
   <div class="container">
     <h1>Projetos</h1>
-    <p class="small">Antes e depois, com pedido, escopo e duração.</p>
+    <p class="small">Conheça um pouco do trabalho da Verde Tom e entenda sobre escopo e duração de alguns projetos.</p>
 
     <div id="projectsGrid" class="projects-grid"></div>
   </div>
@@ -304,8 +304,8 @@
             <h3>${p.titulo || ""}</h3>
             <div class="project-card__meta">
               <div class="project-card__categories">
-  ${cats.map(c => `<span class="badge">${c}</span>`).join("")}
-</div>
+              ${cats.map(c => `<span class="badge">${c}</span>`).join("")}
+              </div>
               <span class="project-card__tag">⏱ ${p.duracao || "-"}</span>
               <span class="project-card__tag">📍 ${p.local || "-"}</span>
               <a class="small" href="${url}" onclick="event.preventDefault()">ver detalhes</a>
