@@ -77,12 +77,7 @@
     <h1>Blog</h1>
     <div id="blogGrid" class="grid-3"></div>
   </div>
-</section>
-
-<script>
-(async function(){
-  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdP_h8M1SSBrqtxsH0j0V6eQ9MN66HX4JhSG0KgP_wyGVZmVAfzMX_J-MFPqc90c54N4vpkjakM0pj/pub?gid=0&single=true&output=csv";
-function parseCSV(text){
+  function parseCSV(text){
     const lines = text.trim().split("\n");
     const headers = lines.shift().split(",");
 
@@ -116,6 +111,172 @@ function parseCSV(text){
   }
 })();
 </script>
+</section>
+
+<script>
+(async function(){
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdP_h8M1SSBrqtxsH0j0V6eQ9MN66HX4JhSG0KgP_wyGVZmVAfzMX_J-MFPqc90c54N4vpkjakM0pj/pub?gid=0&single=true&output=csv";
+  function parseCSV(text){
+    const rows = [];
+    let row = [];
+    let cur = "";
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i++){
+      const c = text[i];
+      const n = text[i+1];
+
+      if (c === '"' && inQuotes && n === '"'){ cur += '"'; i++; continue; }
+      if (c === '"'){ inQuotes = !inQuotes; continue; }
+
+      if (c === ',' && !inQuotes){
+        row.push(cur);
+        cur = "";
+        continue;
+      }
+      if ((c === '\n' || c === '\r') && !inQuotes){
+        if (cur.length || row.length){
+          row.push(cur);
+          rows.push(row);
+        }
+        cur = "";
+        row = [];
+        if (c === '\r' && n === '\n') i++;
+        continue;
+      }
+      cur += c;
+    }
+    if (cur.length || row.length){
+      row.push(cur);
+      rows.push(row);
+    }
+
+    const headers = rows.shift().map(h => h.replace(/^\uFEFF/, "").trim());
+    return rows
+      .filter(r => r.some(v => String(v||"").trim().length))
+      .map(r => {
+        const obj = {};
+        headers.forEach((h, idx) => obj[h] = String(r[idx] ?? "").trim());
+        return obj;
+      });
+  }
+
+  function truncateByDevice(text){
+    const clean = String(text || "").trim();
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    const limit = isMobile ? 30 : 60;
+    if (clean.length <= limit) return clean;
+    return clean.slice(0, limit).trimEnd() + "…";
+  }
+
+  // Modal helpers
+  const modal = document.getElementById("postModal");
+  const btnClose = modal?.querySelector(".modal-close");
+  const pmImage = document.getElementById("pmImage");
+  const pmTitle = document.getElementById("pmTitle");
+  const pmAuthor = document.getElementById("pmAuthor");
+  const pmAuthorPhoto = document.getElementById("pmAuthorPhoto");
+  const pmDate = document.getElementById("pmDate");
+  const pmBody = document.getElementById("pmBody");
+
+  function openModal(post){
+    if(!modal) return;
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
+
+    pmTitle.textContent = post.titulo || "";
+    pmAuthor.textContent = post.autor || "";
+    pmDate.textContent = post.data || "";
+
+    if (post.imagemUrl){
+      pmImage.src = post.imagemUrl;
+      pmImage.alt = post.titulo || "Imagem do post";
+      pmImage.style.display = "block";
+    } else {
+      pmImage.style.display = "none";
+    }
+
+    if (post.autorFotoUrl){
+      pmAuthorPhoto.src = post.autorFotoUrl;
+      pmAuthorPhoto.alt = post.autor || "Autor";
+      pmAuthorPhoto.style.display = "block";
+    } else {
+      pmAuthorPhoto.style.display = "none";
+    }
+
+    // Texto longo: usa "conteudo" se existir, senão cai no textoCentral
+    pmBody.textContent = post.conteudo || post.textoCentral || "";
+
+    // trava scroll do fundo
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeModal(){
+    if(!modal) return;
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+
+  btnClose?.addEventListener("click", closeModal);
+  modal?.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeModal();
+  });
+
+  try{
+    const res = await fetch(CSV_URL, { cache: "no-store" });
+    if(!res.ok) throw new Error("Falha ao buscar CSV: " + res.status);
+    const csv = await res.text();
+
+    const posts = parseCSV(csv)
+      .filter(p => (p.status || "").toLowerCase() === "publicado");
+
+    // ordena por data (YYYY-MM-DD) desc
+    posts.sort((a,b) => (b.data || "").localeCompare(a.data || ""));
+
+    const grid = document.getElementById("blogGrid");
+    if(!grid) return;
+
+    grid.innerHTML = posts.map((p, idx) => {
+      const previewBase = p.textoCentral || p.conteudo || "";
+      const preview = truncateByDevice(previewBase);
+
+      return `
+        <article class="card">
+          ${p.imagemUrl ? `<img src="${p.imagemUrl}" alt="${p.titulo}" style="border-radius:12px; margin-bottom:12px;">` : ""}
+
+          <h3 style="margin:0 0 8px;">${p.titulo || ""}</h3>
+          <p class="small" style="margin:0 0 10px;">${preview}</p>
+
+          <div style="display:flex; align-items:center; gap:10px;">
+            ${p.autorFotoUrl ? `<img src="${p.autorFotoUrl}" alt="${p.autor}" style="width:34px;height:34px;border-radius:999px;object-fit:cover;border:1px solid var(--line);">` : ""}
+            <span class="small">${p.autor || ""}</span>
+          </div>
+
+          <button class="read-more" type="button" data-post-index="${idx}">
+            ler mais
+          </button>
+        </article>
+      `;
+    }).join("") || `<p class="small">Nenhum post publicado ainda.</p>`;
+
+    // listeners do "ler mais"
+    grid.querySelectorAll(".read-more").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const i = Number(btn.getAttribute("data-post-index"));
+        openModal(posts[i]);
+      });
+    });
+
+  } catch(err){
+    console.error(err);
+  }
+})();
+</script>
+
 
   </main>
 
