@@ -512,6 +512,97 @@ body.modal-open{
   height: 100%;
 }
 
+/* BLOG CARDS (padronização) */
+#blogGrid{
+  align-items: stretch;
+}
+
+.blog-card{
+  cursor: pointer;
+  display: grid;
+  grid-template-rows: 220px 1fr; /* imagem fixa + corpo */
+  gap: 0;
+  padding: 14px;
+}
+
+.blog-card__image{
+  width: 100%;
+  height: 220px;            /* altura fixa */
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f2f2f2;
+  border: 1px solid var(--line);
+}
+
+.blog-card__image img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;        /* padroniza sem distorcer */
+  object-position: center;
+  display: block;
+}
+
+.blog-card__body{
+  display: grid;
+  grid-template-rows: auto auto 1fr auto; /* título, preview, espaço, meta */
+  gap: 10px;
+  padding-top: 12px;
+}
+
+.blog-card__body h3{
+  margin: 0;
+  line-height: 1.2;
+}
+
+.blog-card__preview{
+  margin: 0;
+  color: var(--muted);
+  min-height: 2.6em;  /* dá estabilidade visual */
+}
+
+/* META: avatar + nome + ler mais (sempre no mesmo lugar) */
+.blog-card__meta{
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 10px;
+  align-items: center;
+  margin-top: 2px;
+}
+
+.blog-card__avatar{
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+
+.blog-card__meta-text{
+  display: grid;
+  gap: 2px;
+}
+
+.blog-card__author{
+  font-size: .95rem;
+  color: var(--text);
+}
+
+.blog-card__more{
+  font-size: .92rem;
+  color: var(--brand2);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  width: fit-content;
+}
+
+/* Hover elegante */
+.blog-card:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0,0,0,.08);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
 /* Desktop: modal com duas colunas (imagem | conteúdo) */
 @media (min-width: 900px){
 .modal-inner{
@@ -585,7 +676,10 @@ body.modal-open{
 
   /* Ajuste hero fold */
   .hero-fold{ padding: 0 20px; }
-    .blog-card__image{
+ .blog-card{
+    grid-template-rows: 180px 1fr;
+  }
+  .blog-card__image{
     height: 180px;
   }
 

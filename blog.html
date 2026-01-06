@@ -281,16 +281,20 @@
 
           <div class="blog-card__body">
             <h3>${p.titulo || ""}</h3>
-            <p class="small">${preview}</p>
+            <p class="blog-card__preview">${preview}</p>
 
-            <div class="blog-card__meta">
-              ${p.autorFotoUrl ? `<img src="${p.autorFotoUrl}" alt="${p.autor || ""}">` : ""}
-              <span class="small">${p.autor || ""}</span>
-            </div>
+       <div></div> <!-- spacer para manter meta no rodapé -->
 
-            <span class="read-more">ler mais</span>
-          </div>
-        </article>
+      <div class="blog-card__meta">
+        ${p.autorFotoUrl ? `<img class="blog-card__avatar" src="${p.autorFotoUrl}" alt="${p.autor || ""}">` : `<div class="blog-card__avatar"></div>`}
+
+        <div class="blog-card__meta-text">
+          <div class="blog-card__author">${p.autor || ""}</div>
+          <div class="blog-card__more">ler mais</div>
+        </div>
+      </div>
+    </div>
+  </article>
       `;
     }).join("") || `<p class="small">Nenhum post publicado ainda.</p>`;
 
