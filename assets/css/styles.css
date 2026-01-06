@@ -115,23 +115,45 @@ img{ max-width:100%; height:auto; display:block; }
 
 /* Hamburger */
 .menu-btn{
-  display:none;
-  width: 48px;      /* área de toque maior */
-  height: 48px;
-  border: 1px solid var(--line);  /* cria contorno sutil */
-  background: rgba(255,255,255,.9);
-  border-radius: 14px;
-  padding: 12px;
+  display:none; /* desktop */
+  width: 56px;
+  height: 56px;
+
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.95);
+  border-radius: 16px;
+
+  padding: 10px 10px;
   cursor: pointer;
+
+  /* ESSENCIAL: layout interno */
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 4px;
 }
 
 .menu-btn span{
   display:block;
-  height: 2.5px;     /* linhas mais grossas */
-  background: #163224; /* verde mais escuro (contraste) */
-  margin: 7px 0;
+  width: 22px;
+  height: 2.5px;
+  background: #163224;
   border-radius: 2px;
+  margin: 0; /* remove qualquer margin antiga */
 }
+
+.menu-btn .menu-label{
+  margin-top: 2px;
+  font-style: normal;
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #163224;
+  line-height: 1;
+}
+
 
 /* =========================
    HERO / HERO FOLD
@@ -442,11 +464,8 @@ textarea{ min-height:120px; resize:vertical; }
   }
 
   /* Mobile menu */
-  .menu-btn{
-    display:inline-flex;
-    flex-direction:column;
-    justify-content:center;
-  }
+  .menu-btn{ display:flex; }
+
 
   .main-nav{
     position:absolute;
