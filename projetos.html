@@ -303,11 +303,11 @@
           <div class="project-card__body">
             <h3>${p.titulo || ""}</h3>
             <div class="project-card__meta">
-              <div class="project-card__categories">
-              ${cats.map(c => `<span class="badge">${c}</span>`).join("")}
-              </div>
               <span class="project-card__tag">⏱ ${p.duracao || "-"}</span>
               <span class="project-card__tag">📍 ${p.local || "-"}</span>
+                            <div class="project-card__categories">
+              ${cats.map(c => `<span class="badge">${c}</span>`).join("")}
+              </div>
               <a class="small" href="${url}" onclick="event.preventDefault()">ver detalhes</a>
               </div>
           </div>
