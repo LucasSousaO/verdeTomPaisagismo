@@ -802,7 +802,7 @@ body.modal-open{
   bottom: 14px;
   margin-left: auto;     /* joga para a direita */
   width: fit-content;
-  display: grid;
+  display: flex;
   gap: 10px;
   justify-content: flex-end;
   padding-top: 10px;
@@ -825,6 +825,8 @@ body.modal-open{
   font-weight:600;
   cursor:pointer;
   text-decoration:none;
+  height: min-content;
+  font-size: 10px;
 }
 
 .project-share__btn--secondary{
@@ -929,6 +931,8 @@ body.modal-open{
   border-radius:999px;
   color:var(--muted);
   font-size:.92rem;
+  height: fit-content;
+
 }
 .thumb--static{
   pointer-events: none;        /* impede clique */
