@@ -22,7 +22,16 @@ body{
 }
 a{color:inherit; text-decoration:none}
 img{max-width:100%; height:auto; display:block}
+:root{
+  --container: 1180px; /* ajuste: 1100–1280 */
+  --pad: 32px;
+}
 
+.container{
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--pad);
+}
 .container{max-width:var(--max); margin:0 auto; padding:0 18px}
 .small{font-size:.95rem; color:var(--muted)}
 .badge{
@@ -129,13 +138,28 @@ img{max-width:100%; height:auto; display:block}
   gap:22px;
   align-items:stretch;
 }
-.hero-fold {
+.hero-fold{
   min-height: 100vh;
   display: flex;
-  align-items: center;      /* centraliza vertical */
-  justify-content: center;  /* centraliza horizontal */
-  padding: 0 32px;
+  align-items: center;
 }
+
+.hero-inner{
+  text-align: center;
+  width: 100%;
+}
+
+.hero-inner h1{
+  margin: 0;
+  font-size: clamp(2.2rem, 4vw, 4.2rem);
+  line-height: 1.1;
+  font-weight: 600;
+  /* limita a “linha” do texto para ficar elegante em telas muito grandes */
+  max-width: 18ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 
 /* Conteúdo interno */
 .hero-content {
@@ -344,6 +368,8 @@ textarea{min-height:120px; resize:vertical}
     .hero-fold {
     padding: 0 20px;
   }
+    :root{ --pad: 18px; }
+
 
   .hero-content h1 {
     font-size: clamp(1.8rem, 7vw, 2.6rem);
