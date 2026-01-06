@@ -92,7 +92,6 @@
         <div class="share-actions">
   <a id="shareWhatsApp" class="cta" href="#" target="_blank" rel="noopener">Compartilhar no WhatsApp</a>
   <button id="copyLink" class="cta secondary" type="button">Copiar link</button>
-  <a class="cta secondary" href="https://www.instagram.com/" target="_blank" rel="noopener">Abrir Instagram</a>
 </div>
 
         <div class="post-meta">
@@ -336,16 +335,6 @@ const postUrl = buildPostUrl(slug);
       `;
     }).join("") || `<p class="small">Nenhum post publicado ainda.</p>`;
 
-    const hashSlug = decodeURIComponent((window.location.hash || "").replace("#","").trim());
-if (hashSlug){
-  openPostBySlug(hashSlug, posts);
-}
-
-window.addEventListener("hashchange", () => {
-  const s = decodeURIComponent((window.location.hash || "").replace("#","").trim());
-  if(!s) return;
-  openPostBySlug(s, posts);
-});
     // click no card inteiro
 grid.addEventListener("click", (e) => {
   const card = e.target.closest(".blog-card");
@@ -377,8 +366,7 @@ grid.addEventListener("keydown", (e) => {
   } catch(err){
     console.error(err);
   }
-})();
-function slugify(s){
+  function slugify(s){
   return String(s || "")
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
@@ -392,10 +380,24 @@ function buildPostUrl(slug){
   return `${base}#${encodeURIComponent(slug)}`;
 }
 
-function openPostBySlug(slug, posts){
-  const idx = posts.findIndex(p => (p.slug || slugify(p.titulo)) === slug);
-  if (idx >= 0) openModal(posts[idx]);
-}
+  function openPostBySlug(slug){
+    const s = decodeURIComponent(String(slug || "")).trim();
+    if(!s) return;
+
+    const idx = posts.findIndex(p => (p.slug || slugify(p.titulo || "")) === s);
+    if (idx >= 0) openModal(posts[idx]);
+  }
+
+  // depois que grid.innerHTML foi montado:
+  const hashSlug = decodeURIComponent((window.location.hash || "").replace("#","").trim());
+  if (hashSlug) openPostBySlug(hashSlug);
+
+  window.addEventListener("hashchange", () => {
+    const s = decodeURIComponent((window.location.hash || "").replace("#","").trim());
+    if (s) openPostBySlug(s);
+  });
+
+})();
 
 </script>
 
