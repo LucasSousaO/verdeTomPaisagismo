@@ -73,6 +73,11 @@
           <span>ANTES</span>
           <span>DEPOIS</span>
         </div>
+        <button class="compare-nav compare-nav--prev" id="prPrev" type="button" aria-label="Imagem anterior">‹</button>
+<button class="compare-nav compare-nav--next" id="prNext" type="button" aria-label="Próxima imagem">›</button>
+
+<div class="compare-count" id="prCount" aria-hidden="true"></div>
+
       </div>
 
       <!-- Texto fixo abaixo (da planilha) -->
@@ -259,6 +264,10 @@ function resolveImageSrc(input){
   const prEscopo = document.getElementById("prEscopo");
   const prDuracao = document.getElementById("prDuracao");
   const prLocal = document.getElementById("prLocal");
+  const prPrev = document.getElementById("prPrev");
+const prNext = document.getElementById("prNext");
+const prCount = document.getElementById("prCount");
+const compareBox = document.getElementById("compareBox");
 
   const shareWA = document.getElementById("shareProjectWhatsApp");
 const btnCopy = document.getElementById("copyProjectLink");
@@ -309,6 +318,74 @@ compareBox?.addEventListener("pointercancel", endDrag);
 compareBox?.addEventListener("lostpointercapture", endDrag);
 compareBox?.addEventListener("pointerleave", endDrag);
 
+let slides = [];
+let slideIndex = 0;
+
+function collectSlides(project){
+  const out = [];
+  for (let i = 1; i <= 5; i++){
+    const afterKey = `imagemDepoisUrl${i}`;
+    const beforeKey = `imagemAntesUrl${i}`;
+
+    const after = String(project[afterKey] || "").trim();
+    const before = String(project[beforeKey] || "").trim();
+
+    if (!after) continue; // só conta slide se tiver "depois"
+
+    out.push({
+      after,
+      before, // pode ser vazio
+      mode: before ? "compare" : "single"
+    });
+  }
+  return out;
+}
+
+function applySlide(idx){
+  if (!slides.length) return;
+
+  slideIndex = Math.max(0, Math.min(slides.length - 1, idx));
+  const s = slides[slideIndex];
+
+  // sempre tem after
+  prAfter.src = resolveImageSrc(s.after);
+  prAfter.alt = prTitle.textContent ? `Depois - ${prTitle.textContent}` : "Depois";
+
+  if (s.mode === "compare"){
+    prBefore.src = resolveImageSrc(s.before);
+    prBefore.alt = prTitle.textContent ? `Antes - ${prTitle.textContent}` : "Antes";
+
+    prBefore.style.display = "block";
+    prRange.style.display = "block";
+    prHandle.style.display = "block";
+    compareBox.dataset.mode = "compare";
+
+    prRange.value = 50;
+    setCompare(50);
+  } else {
+    // single (sem antes/depois)
+    prBefore.src = "";
+    prBefore.style.display = "none";
+    prRange.style.display = "none";
+    prHandle.style.display = "none";
+    compareBox.dataset.mode = "single";
+
+    // remove cortes residuais
+    prAfter.style.clipPath = "none";
+  }
+
+  // contador e controle de setas
+  if (prCount) prCount.textContent = `${slideIndex + 1}/${slides.length}`;
+
+  const hasNav = slides.length > 1;
+  compareBox.dataset.nav = hasNav ? "on" : "off";
+
+  if (prPrev) prPrev.disabled = !hasNav || slideIndex === 0;
+  if (prNext) prNext.disabled = !hasNav || slideIndex === slides.length - 1;
+}
+
+function goPrev(){ applySlide(slideIndex - 1); }
+function goNext(){ applySlide(slideIndex + 1); }
 
 function openModal(project){
   if(!modal) return;
@@ -318,20 +395,44 @@ function openModal(project){
   history.pushState(null, "", `#${encodeURIComponent(slug)}`);
 
   prTitle.textContent = project.titulo || "";
-const after = project.imagemDepoisUrl1 || "";
-const before = project.imagemAntesUrl1 || "";
 
-prAfter.src  = resolveImageSrc(after);
-prBefore.src = resolveImageSrc(before);
+// imagem depois (sempre obrigatória)
+prAfter.src = resolveImageSrc(after);
+prAfter.alt = project.titulo ? `Projeto ${project.titulo}` : "Projeto";
 
+// monta slides 1..5
+slides = collectSlides(project);
+slideIndex = 0;
 
-  prPedido.textContent = project.pedido || "";
-  prEscopo.textContent = project.escopo || "";
-  prDuracao.textContent = project.duracao || "-";
-  prLocal.textContent = project.local || "-";
+// fallback: se não tiver slide nenhum, não abre (ou abre sem imagem)
+if (!slides.length){
+  console.warn("Projeto publicado sem imagemDepoisUrl1..5:", project);
+  return;
+}
 
-  prRange.value = 50;
-  setCompare(50);
+// aplica primeiro slide
+applySlide(0);
+
+// CASO 1 — TEM antes/depois → comparador
+if (before) {
+  prBefore.src = resolveImageSrc(before);
+  prBefore.style.display = "block";
+  prRange.style.display = "block";
+  prHandle.style.display = "block";
+  compareBox.dataset.mode = "compare";
+
+}
+// CASO 2 — SÓ imagem final → imagem estática
+else {
+  prBefore.src = "";
+  prBefore.style.display = "none";
+  prRange.style.display = "none";
+  prHandle.style.display = "none";
+  compareBox.dataset.mode = "single";
+
+  // remove qualquer recorte
+  prAfter.style.clipPath = "none";
+}
 
   // SHARE
   const url = buildUrl(slug);
@@ -358,6 +459,15 @@ prBefore.src = resolveImageSrc(before);
   lockBodyScroll();
 }
 
+prPrev?.addEventListener("click", (e) => { e.stopPropagation(); goPrev(); });
+prNext?.addEventListener("click", (e) => { e.stopPropagation(); goNext(); });
+
+// Teclado (quando modal aberto)
+document.addEventListener("keydown", (e) => {
+  if (!modal?.classList.contains("open")) return;
+  if (e.key === "ArrowLeft") goPrev();
+  if (e.key === "ArrowRight") goNext();
+});
 
   function closeModal(){
     if(!modal) return;

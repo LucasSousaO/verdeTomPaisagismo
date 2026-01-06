@@ -843,7 +843,64 @@ body.modal-open{
   aspect-ratio: 16 / 9;
   touch-action: pan-y;
 }
+.compare[data-mode="single"]{
+  cursor: default;
+}
 
+.compare[data-mode="single"] .compare__labels{
+  display: none;
+}
+
+.compare[data-mode="single"] .compare__handle{
+  display: none;
+}
+
+.compare[data-mode="single"] .compare__range{
+  display: none;
+}
+/* Botões de navegação do modal (setas) */
+.compare-nav{
+  position:absolute;
+  top:50%;
+  transform: translateY(-50%);
+  width:38px;
+  height:38px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.6);
+  background: rgba(0,0,0,.35);
+  color:#fff;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:24px;
+  line-height:1;
+  z-index:5;
+  backdrop-filter: blur(6px);
+}
+
+.compare-nav--prev{ left:10px; }
+.compare-nav--next{ right:10px; }
+
+.compare-nav:hover{ background: rgba(0,0,0,.48); }
+
+.compare-count{
+  position:absolute;
+  right:12px;
+  bottom:12px;
+  background: rgba(0,0,0,.45);
+  color:#fff;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:.82rem;
+  z-index:5;
+}
+
+/* quando só tem 1 imagem, esconde navegação */
+.compare[data-nav="off"] .compare-nav,
+.compare[data-nav="off"] .compare-count{
+  display:none;
+}
 .compare__img{
   position:absolute;
   inset:0;
