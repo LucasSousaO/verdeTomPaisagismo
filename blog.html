@@ -81,9 +81,10 @@
 
 <script>
 (async function(){
-  const ENDPOINT = "https://script.google.com/macros/s/AKfycbwwVbHqG357XSW6RXH9zmBgiboF-935npZuCuugCYxuEvcyHrZEISo9KV0taW8bCf2A/exec";
+  const ENDPOINT = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdP_h8M1SSBrqtxsH0j0V6eQ9MN66HX4JhSG0KgP_wyGVZmVAfzMX_J-MFPqc90c54N4vpkjakM0pj/pub?gid=0&single=true&output=csv";
   const res = await fetch(ENDPOINT);
-  const data = await res.json();
+  const csv = await res.text();
+
 
   const grid = document.getElementById("blogGrid");
   grid.innerHTML = data.posts.map(p => `
