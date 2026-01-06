@@ -77,45 +77,56 @@
     <h1>Blog</h1>
     <div id="blogGrid" class="grid-3"></div>
   </div>
-  function parseCSV(text){
-    const lines = text.trim().split("\n");
-    const headers = lines.shift().split(",");
-
-    return lines.map(line => {
-      const values = line.split(",");
-      const obj = {};
-      headers.forEach((h, i) => obj[h.trim()] = (values[i] || "").trim());
-      return obj;
-    });
-  }
-
-  try{
-    const res = await fetch(CSV_URL, { cache: "no-store" });
-    if(!res.ok) throw new Error("Erro ao buscar CSV");
-
-    const csv = await res.text();
-    const posts = parseCSV(csv)
-      .filter(p => (p.status || "").toLowerCase() === "publicado");
-
-    const grid = document.getElementById("blogGrid");
-    grid.innerHTML = posts.map(p => `
-      <article class="card">
-        <img src="${p.imagemUrl}" alt="${p.titulo}">
-        <h3>${p.titulo}</h3>
-        <p>${p.textoCentral}</p>
-      </article>
-    `).join("");
-
-  } catch(err){
-    console.error(err);
-  }
-})();
-</script>
+  
 </section>
 
+
+
+
+  </main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+
+    <div class="footer-main">
+      <a class="footer-instagram" 
+         href="https://www.instagram.com/verdetompaisagismo/" 
+         target="_blank" 
+         rel="noopener noreferrer"
+         aria-label="Instagram Cardim Paisagismo">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor"
+            d="M7.75 2h8.5A5.76 5.76 0 0 1 22 7.75v8.5A5.76 5.76 0 0 1 16.25 22h-8.5A5.76 5.76 0 0 1 2 16.25v-8.5A5.76 5.76 0 0 1 7.75 2Zm0 1.5A4.26 4.26 0 0 0 3.5 7.75v8.5A4.26 4.26 0 0 0 7.75 20.5h8.5a4.26 4.26 0 0 0 4.25-4.25v-8.5A4.26 4.26 0 0 0 16.25 3.5h-8.5ZM12 7a5 5 0 1 1 0 10a5 5 0 0 1 0-10Zm0 1.5a3.5 3.5 0 1 0 0 7a3.5 3.5 0 0 0 0-7Zm5.25-.88a.88.88 0 1 1 0 1.76a.88.88 0 0 1 0-1.76Z"/>
+        </svg>
+        instagram
+      </a>
+
+      <span class="footer-sep">•</span>
+
+      <span>Belo Horizonte, Minas Gerais</span>
+<br>
+      <a href="mailto:contato@verdetompaisagismo.com.br">
+        contato@verdetompaisagismo.com.br
+      </a>
+
+      <span class="footer-sep">•</span>
+
+      <a href="wa.me/+5531987415012">
+        +55 31 98741-5012
+      </a>
+    </div>
+
+    <div class="footer-copy">
+     © <span id="year"></span>  Verde Tom Paisagismo - Todos os direitos reservados.
+    </div>
+
+  </div>
+
+  <script src="assets/js/main.js"></script>
 <script>
 (async function(){
   const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdP_h8M1SSBrqtxsH0j0V6eQ9MN66HX4JhSG0KgP_wyGVZmVAfzMX_J-MFPqc90c54N4vpkjakM0pj/pub?gid=0&single=true&output=csv";
+
   function parseCSV(text){
     const rows = [];
     let row = [];
@@ -204,10 +215,7 @@
       pmAuthorPhoto.style.display = "none";
     }
 
-    // Texto longo: usa "conteudo" se existir, senão cai no textoCentral
     pmBody.textContent = post.conteudo || post.textoCentral || "";
-
-    // trava scroll do fundo
     document.body.style.overflow = "hidden";
   }
 
@@ -219,12 +227,8 @@
   }
 
   btnClose?.addEventListener("click", closeModal);
-  modal?.addEventListener("click", (e) => {
-    if (e.target === modal) closeModal();
-  });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeModal();
-  });
+  modal?.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
 
   try{
     const res = await fetch(CSV_URL, { cache: "no-store" });
@@ -234,7 +238,6 @@
     const posts = parseCSV(csv)
       .filter(p => (p.status || "").toLowerCase() === "publicado");
 
-    // ordena por data (YYYY-MM-DD) desc
     posts.sort((a,b) => (b.data || "").localeCompare(a.data || ""));
 
     const grid = document.getElementById("blogGrid");
@@ -256,14 +259,11 @@
             <span class="small">${p.autor || ""}</span>
           </div>
 
-          <button class="read-more" type="button" data-post-index="${idx}">
-            ler mais
-          </button>
+          <button class="read-more" type="button" data-post-index="${idx}">ler mais</button>
         </article>
       `;
     }).join("") || `<p class="small">Nenhum post publicado ainda.</p>`;
 
-    // listeners do "ler mais"
     grid.querySelectorAll(".read-more").forEach(btn => {
       btn.addEventListener("click", () => {
         const i = Number(btn.getAttribute("data-post-index"));
@@ -276,47 +276,5 @@
   }
 })();
 </script>
-
-
-  </main>
-
-<footer class="site-footer">
-  <div class="container footer-inner">
-
-    <div class="footer-main">
-      <a class="footer-instagram" 
-         href="https://www.instagram.com/verdetompaisagismo/" 
-         target="_blank" 
-         rel="noopener noreferrer"
-         aria-label="Instagram Cardim Paisagismo">
-        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-          <path fill="currentColor"
-            d="M7.75 2h8.5A5.76 5.76 0 0 1 22 7.75v8.5A5.76 5.76 0 0 1 16.25 22h-8.5A5.76 5.76 0 0 1 2 16.25v-8.5A5.76 5.76 0 0 1 7.75 2Zm0 1.5A4.26 4.26 0 0 0 3.5 7.75v8.5A4.26 4.26 0 0 0 7.75 20.5h8.5a4.26 4.26 0 0 0 4.25-4.25v-8.5A4.26 4.26 0 0 0 16.25 3.5h-8.5ZM12 7a5 5 0 1 1 0 10a5 5 0 0 1 0-10Zm0 1.5a3.5 3.5 0 1 0 0 7a3.5 3.5 0 0 0 0-7Zm5.25-.88a.88.88 0 1 1 0 1.76a.88.88 0 0 1 0-1.76Z"/>
-        </svg>
-        instagram
-      </a>
-
-      <span class="footer-sep">•</span>
-
-      <span>Belo Horizonte, Minas Gerais</span>
-<br>
-      <a href="mailto:contato@verdetompaisagismo.com.br">
-        contato@verdetompaisagismo.com.br
-      </a>
-
-      <span class="footer-sep">•</span>
-
-      <a href="wa.me/+5531987415012">
-        +55 31 98741-5012
-      </a>
-    </div>
-
-    <div class="footer-copy">
-     © <span id="year"></span>  Verde Tom Paisagismo - Todos os direitos reservados.
-    </div>
-
-  </div>
-
-  <script src="assets/js/main.js"></script>
 </body>
 </html>
