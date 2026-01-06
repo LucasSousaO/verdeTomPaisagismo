@@ -427,6 +427,7 @@ textarea{ min-height:120px; resize:vertical; }
   padding: 16px;
   background: rgba(0,0,0,.65);
   z-index: 999;
+    overscroll-behavior: contain; /* impede vazar scroll para o fundo */
 }
 .modal.open{ display:flex; }
 
@@ -509,7 +510,8 @@ textarea{ min-height:120px; resize:vertical; }
 /* trava scroll do fundo */
 body.modal-open{
   overflow: hidden;
-  height: 100%;
+  position: fixed;
+  width: 100%;
 }
 
 /* BLOG CARDS (padronização) */
