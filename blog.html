@@ -75,13 +75,33 @@
     <section class="section">
   <div class="container">
     <h1>Blog</h1>
-    <div id="blogGrid" class="grid-3"></div>
+    <div id="blogGrid" class="grid-3">
+      <div id="postModal" class="modal" aria-hidden="true">
+  <button class="modal-close" type="button" aria-label="Fechar">✕</button>
+  <div class="modal-inner">
+    <div class="post-modal">
+      <img id="pmImage" class="post-modal__image" alt="">
+      <div class="post-modal__content">
+        <h2 id="pmTitle"></h2>
+
+        <div class="post-modal__meta">
+          <img id="pmAuthorPhoto" class="post-modal__author-photo" alt="">
+          <div>
+            <div id="pmAuthor" class="post-modal__author"></div>
+            <div id="pmDate" class="post-modal__date small"></div>
+          </div>
+        </div>
+
+        <div id="pmBody" class="post-modal__body"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    </div>
   </div>
   
 </section>
-
-
-
 
   </main>
 
@@ -264,12 +284,13 @@
       `;
     }).join("") || `<p class="small">Nenhum post publicado ainda.</p>`;
 
-    grid.querySelectorAll(".read-more").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const i = Number(btn.getAttribute("data-post-index"));
-        openModal(posts[i]);
-      });
-    });
+grid.addEventListener("click", (e) => {
+  const btn = e.target.closest(".read-more");
+  if(!btn) return;
+
+  const i = Number(btn.getAttribute("data-post-index"));
+  openModal(posts[i]);
+});
 
   } catch(err){
     console.error(err);
