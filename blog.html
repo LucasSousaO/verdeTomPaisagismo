@@ -314,6 +314,15 @@ function unlockBodyScroll(){
   modal?.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
 
+  modal.addEventListener("wheel", (e) => {
+  // se o scroll for no backdrop (cinza), bloqueia
+  if (e.target === modal) e.preventDefault();
+}, { passive: false });
+
+modal.addEventListener("touchmove", (e) => {
+  if (e.target === modal) e.preventDefault();
+}, { passive: false });
+
   function openPostBySlug(slug){
     const s = decodeURIComponent(String(slug || "")).trim();
     if(!s) return;

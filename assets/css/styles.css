@@ -430,7 +430,10 @@ textarea{ min-height:120px; resize:vertical; }
     overscroll-behavior: contain; /* impede vazar scroll para o fundo */
 }
 .modal.open{ display:flex; }
-
+.post-content{
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
 .modal-inner{
   width: min(980px, 100%);
   height: min(88vh, 820px);
