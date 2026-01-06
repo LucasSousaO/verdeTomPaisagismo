@@ -719,7 +719,7 @@ body.modal-open{
   flex-direction: column;
   gap: 10px;
   padding: 14px;
-
+  min-height: 170px;
   /* espaço reservado pro link no canto */
   padding-bottom: 44px;
 }
@@ -730,12 +730,13 @@ body.modal-open{
 }
 
 .project-card__meta{
+  margin-top:auto;
   display:flex;
   gap:10px;
   flex-wrap:wrap;
   color:var(--muted);
   font-size:.92rem;
-  align-items: center;
+  align-items: flex-end;
 }
 
 .project-card__tag{
@@ -769,6 +770,11 @@ body.modal-open{
   /* visual de link/botão (opcional) */
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+.project-card__meta a{
+  margin-left:auto;             /* joga o link pra direita */
+  align-self:flex-end;          /* garante canto inferior */
+  white-space:nowrap;
 }
 
 .compare{

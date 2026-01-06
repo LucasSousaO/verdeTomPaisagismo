@@ -224,6 +224,47 @@
     prHandle.style.left = `${v}%`;
   }
 
+ const compareBox = document.getElementById("compareBox");
+
+function setCompareFromClientX(clientX){
+  if (!compareBox || !prRange) return;
+
+  const r = compareBox.getBoundingClientRect();
+  if (!r.width) return;
+
+  const x = Math.max(0, Math.min(r.width, clientX - r.left));
+  const v = (x / r.width) * 100;
+
+  prRange.value = v;
+  setCompare(v);
+}
+
+let dragging = false;
+
+function startDrag(e){
+  if (!modal?.classList.contains("open")) return; // só quando modal estiver aberto
+  dragging = true;
+  compareBox.setPointerCapture?.(e.pointerId);
+  setCompareFromClientX(e.clientX);
+}
+
+function moveDrag(e){
+  if (!dragging) return;
+  setCompareFromClientX(e.clientX);
+}
+
+function endDrag(){
+  dragging = false;
+}
+
+compareBox?.addEventListener("pointerdown", startDrag);
+compareBox?.addEventListener("pointermove", moveDrag);
+compareBox?.addEventListener("pointerup", endDrag);
+compareBox?.addEventListener("pointercancel", endDrag);
+compareBox?.addEventListener("lostpointercapture", endDrag);
+compareBox?.addEventListener("pointerleave", endDrag);
+
+
   function openModal(project){
     if(!modal) return;
 
