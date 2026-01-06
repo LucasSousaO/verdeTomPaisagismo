@@ -7,7 +7,7 @@
 
   <title>Blog | Verde Tom Paisagismo</title>
   <meta name="description" content="Dicas de plantas, manutenção e paisagismo em BH e região. Conteúdo para orientar decisões e melhorar o cuidado com o jardim." />
-  <link rel="canonical" href="https://SEUUSUARIO.github.io/SEUREPO/blog.html" />
+  <link rel="canonical" href="https://lucassousao.github.io/verdeTomPaisagismo/blog.html" />
   <meta name="robots" content="index,follow" />
 
   <link rel="icon" href="assets/images/logo.webp" />
@@ -75,7 +75,8 @@
     <section class="section">
   <div class="container">
     <h1>Blog</h1>
-    <div id="blogGrid" class="grid-3">
+    <div id="blogGrid" class="grid-3"></div>
+
       <div id="postModal" class="modal" aria-hidden="true">
   <button class="modal-close" type="button" aria-label="Fechar">✕</button>
   <div class="modal-inner">
@@ -97,8 +98,6 @@
     </div>
   </div>
 </div>
-
-    </div>
   </div>
   
 </section>
@@ -200,7 +199,7 @@
     return clean.slice(0, limit).trimEnd() + "…";
   }
 
-  // Modal helpers
+  // Modal helpers (o modal precisa existir FORA do blogGrid)
   const modal = document.getElementById("postModal");
   const btnClose = modal?.querySelector(".modal-close");
   const pmImage = document.getElementById("pmImage");
@@ -263,51 +262,54 @@
     const grid = document.getElementById("blogGrid");
     if(!grid) return;
 
-grid.innerHTML = posts.map((p, idx) => {
-  const previewBase = p.textoCentral || p.conteudo || "";
-  const preview = truncateByDevice(previewBase);
+    grid.innerHTML = posts.map((p, idx) => {
+      const previewBase = p.textoCentral || p.conteudo || "";
+      const preview = truncateByDevice(previewBase);
 
-  return `
-    <article class="card blog-card" data-post-index="${idx}" role="button" tabindex="0">
-      <div class="blog-card__image">
-        ${p.imagemUrl ? `<img src="${p.imagemUrl}" alt="${p.titulo}">` : ""}
-      </div>
+      return `
+        <article class="card blog-card" data-post-index="${idx}" role="button" tabindex="0">
+          <div class="blog-card__image">
+            ${p.imagemUrl ? `<img src="${p.imagemUrl}" alt="${p.titulo || ""}">` : ""}
+          </div>
 
-      <div class="blog-card__body">
-        <h3>${p.titulo || ""}</h3>
-        <p class="small">${preview}</p>
+          <div class="blog-card__body">
+            <h3>${p.titulo || ""}</h3>
+            <p class="small">${preview}</p>
 
-        <div class="blog-card__meta">
-          ${p.autorFotoUrl ? `<img src="${p.autorFotoUrl}" alt="${p.autor}">` : ""}
-          <span class="small">${p.autor || ""}</span>
-        </div>
+            <div class="blog-card__meta">
+              ${p.autorFotoUrl ? `<img src="${p.autorFotoUrl}" alt="${p.autor || ""}">` : ""}
+              <span class="small">${p.autor || ""}</span>
+            </div>
 
-        <span class="read-more">ler mais</span>
-      </div>
-    </article>
-  `;
-
+            <span class="read-more">ler mais</span>
+          </div>
+        </article>
+      `;
     }).join("") || `<p class="small">Nenhum post publicado ainda.</p>`;
 
-grid.addEventListener("click", (e) => {
-  const card = e.target.closest(".blog-card");
-  if (!card) return;
+    // click no card inteiro
+    grid.addEventListener("click", (e) => {
+      const card = e.target.closest(".blog-card");
+      if (!card) return;
+      const i = Number(card.getAttribute("data-post-index"));
+      openModal(posts[i]);
+    });
 
-  const i = Number(card.getAttribute("data-post-index"));
-  openModal(posts[i]);
-});
+    // teclado (Enter / Espaço) no card
+    grid.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      const card = e.target.closest(".blog-card");
+      if (!card) return;
+      e.preventDefault();
+      const i = Number(card.getAttribute("data-post-index"));
+      openModal(posts[i]);
+    });
 
-// teclado (Enter / Espaço)
-grid.addEventListener("keydown", (e) => {
-  if (e.key !== "Enter" && e.key !== " ") return;
-  const card = e.target.closest(".blog-card");
-  if (!card) return;
-
-  e.preventDefault();
-  const i = Number(card.getAttribute("data-post-index"));
-  openModal(posts[i]);
-});
-
+  } catch(err){
+    console.error(err);
+  }
+})();
 </script>
+
 </body>
 </html>
