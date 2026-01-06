@@ -801,10 +801,8 @@ body.modal-open{
   position: sticky;
   bottom: 14px;
   margin-left: auto;     /* joga para a direita */
-  margin-top: 14px;
   width: fit-content;
   display: grid;
-  grid-template-columns: 1fr 1fr; /* 2 colunas iguais */
   gap: 10px;
   justify-content: flex-end;
   padding-top: 10px;
@@ -812,25 +810,21 @@ body.modal-open{
   /* opcional: fundo pra não misturar com texto */
   background: linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,.7), rgba(255,255,255,0));
 }
+.project-modal__info{
+  padding-bottom: 84px; /* reserva espaço pra não colidir com nada no fundo */
+}
 .project-share__btn{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  padding: 10px 14px;        /* ↓ menor */
-  min-height: 38px;          /* ↓ menor */
-  font-size: .9rem;          /* ↓ menos destaque */
-  border-radius: 14px;
-  text-decoration: none;
-  white-space: nowrap;     /* impede “quebrar” */
-  overflow: hidden;        /* evita estourar */
-  text-overflow: ellipsis; /* caso a tela seja muito estreita */
-  
+  padding:10px 12px;
+  border-radius:12px;
   border:1px solid var(--line);
   background: var(--brand);
   color:#fff;
   font-weight:600;
   cursor:pointer;
-  width: 100%;
+  text-decoration:none;
 }
 
 .project-share__btn--secondary{
@@ -907,12 +901,6 @@ body.modal-open{
   margin-top:14px;
   display:grid;
   gap:12px;
-  padding-bottom: 84px; /* reserva espaço pra não colidir com nada no fundo */
-  grid-template-columns: 1fr auto;
-  column-gap: 20px;
-  row-gap: 14px;
-  align-items: start;
-
 }
 
 .info-row{
