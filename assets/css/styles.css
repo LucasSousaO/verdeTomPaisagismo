@@ -686,6 +686,8 @@ body.modal-open{
   overflow: hidden;
   width: 100%;
   max-width: 420px; /* evita card gigante quando tiver 1 */
+  display: flex;
+  flex-direction: column;
 }
 
 .project-card__media{
@@ -712,7 +714,14 @@ body.modal-open{
 .project-card:hover .img-before{ transform: scale(1.02); }
 
 .project-card__body{
-  padding:14px;
+ position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+
+  /* espaço reservado pro link no canto */
+  padding-bottom: 44px;
 }
 
 .project-card__body h3{
@@ -726,6 +735,7 @@ body.modal-open{
   flex-wrap:wrap;
   color:var(--muted);
   font-size:.92rem;
+  align-items: center;
 }
 
 .project-card__tag{
@@ -749,6 +759,16 @@ body.modal-open{
 .project-modal__title{
   margin:0 0 14px;
   font-size:1.4rem;
+}
+/* link no canto inferior direito */
+.project-card__meta a.small{
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+
+  /* visual de link/botão (opcional) */
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .compare{
