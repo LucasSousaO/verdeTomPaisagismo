@@ -55,7 +55,7 @@
 </section>
 
 <!-- MODAL (fora do grid) -->
-<div id="projectModal" class="modal" aria-hidden="true">
+<div id="projectModal" class="modal-project" aria-hidden="true">
   <button class="modal-close" type="button" aria-label="Fechar">✕</button>
 
   <div class="modal-inner modal-inner--project">
@@ -92,6 +92,12 @@
           <div class="info-pill">
             <b>Local:</b> <span id="prLocal"></span>
           </div>
+          <div class="project-share">
+        <a id="shareProjectWhatsApp" class="project-share__btn" target="_blank" rel="noopener">
+        Compartilhar no WhatsApp</a>
+        <button id="copyProjectLink" class="project-share__btn project-share__btn--secondary" type="button">
+        Copiar link</button>
+</div>
         </div>
       </div>
     </div>
@@ -217,6 +223,9 @@
   const prDuracao = document.getElementById("prDuracao");
   const prLocal = document.getElementById("prLocal");
 
+  const shareWA = document.getElementById("shareProjectWhatsApp");
+const btnCopy = document.getElementById("copyProjectLink");
+
   function setCompare(value){
     const v = Math.max(0, Math.min(100, Number(value)));
     prBefore.style.clipPath = `inset(0 ${100 - v}% 0 0)`;
@@ -264,35 +273,57 @@ compareBox?.addEventListener("lostpointercapture", endDrag);
 compareBox?.addEventListener("pointerleave", endDrag);
 
 
-  function openModal(project){
-    if(!modal) return;
+function openModal(project){
+  if(!modal) return;
 
-    const slug = project.slug || slugify(project.titulo || "");
-    history.pushState(null, "", `#${encodeURIComponent(slug)}`);
+  const slug = project.slug || slugify(project.titulo || "");
+  history.pushState(null, "", `#${encodeURIComponent(slug)}`);
 
-    prTitle.textContent = project.titulo || "";
-    prAfter.src = project.imagemDepoisUrl || "";
-    prAfter.alt = (project.titulo ? `Depois - ${project.titulo}` : "Depois");
-    prBefore.src = project.imagemAntesUrl || "";
-    prBefore.alt = (project.titulo ? `Antes - ${project.titulo}` : "Antes");
+  prTitle.textContent = project.titulo || "";
+  prAfter.src = project.imagemDepoisUrl || "";
+  prBefore.src = project.imagemAntesUrl || "";
 
-    prPedido.textContent = project.pedido || "";
-    prEscopo.textContent = project.escopo || "";
-    prDuracao.textContent = project.duracao || "-";
-    prLocal.textContent = project.local || "-";
+  prPedido.textContent = project.pedido || "";
+  prEscopo.textContent = project.escopo || "";
+  prDuracao.textContent = project.duracao || "-";
+  prLocal.textContent = project.local || "-";
 
-    prRange.value = 50;
-    setCompare(50);
+  prRange.value = 50;
+  setCompare(50);
 
-    modal.classList.add("open");
-    modal.setAttribute("aria-hidden", "false");
-    lockBodyScroll();
+  // SHARE
+  const url = buildUrl(slug);
+  const shareText = `Veja este projeto do Verde Tom: ${project.titulo || ""}\n${url}`;
+
+  if (shareWA){
+    shareWA.href = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
   }
+
+  if (btnCopy){
+    btnCopy.onclick = async () => {
+      try{
+        await navigator.clipboard.writeText(url);
+        btnCopy.textContent = "Link copiado!";
+        setTimeout(() => btnCopy.textContent = "Copiar link", 1400);
+      } catch {
+        prompt("Copie o link:", url);
+      }
+    };
+  }
+
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+  lockBodyScroll();
+}
+
 
   function closeModal(){
     if(!modal) return;
     modal.classList.remove("open");
     modal.setAttribute("aria-hidden", "true");
+
+    if (btnCopy) btnCopy.onclick = null;
+
     unlockBodyScroll();
     history.pushState(null, "", window.location.href.split("#")[0]);
   }
