@@ -129,6 +129,29 @@ img{max-width:100%; height:auto; display:block}
   gap:22px;
   align-items:stretch;
 }
+.hero-fold {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;      /* centraliza vertical */
+  justify-content: center;  /* centraliza horizontal */
+  padding: 0 32px;
+}
+
+/* Conteúdo interno */
+.hero-content {
+  max-width: 1000px;
+  text-align: center;
+}
+
+/* Tipografia do título */
+.hero-content h1 {
+  font-size: clamp(2.2rem, 4vw, 3.8rem);
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0;
+  color: #1f1f1f;
+}
+
 .card{
   background:var(--card);
   border:1px solid var(--line);
@@ -279,8 +302,7 @@ textarea{min-height:120px; resize:vertical}
   padding: 14px 20px;
   border-radius: 999px;
 
-  background-color: #1f3d2b; /* verde escuro elegante */
-  color: #ffffff;
+  background:var(--brand); color:#fff;
   text-decoration: none;
 
   font-size: 0.95rem;
@@ -299,6 +321,8 @@ textarea{min-height:120px; resize:vertical}
   transform: translateY(-2px);
   box-shadow: 0 16px 40px rgba(0,0,0,0.22);
   opacity: 0.95;
+    background-color: #1f3d2b; /* verde escuro elegante */
+  color: #ffffff;
 }
 
 
@@ -317,4 +341,12 @@ textarea{min-height:120px; resize:vertical}
     padding: 12px 18px;
     font-size: 0.9rem;
   }
+    .hero-fold {
+    padding: 0 20px;
+  }
+
+  .hero-content h1 {
+    font-size: clamp(1.8rem, 7vw, 2.6rem);
+  }
+}
 }
