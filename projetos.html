@@ -289,6 +289,11 @@
       const slug = (p.slug || slugify(p.titulo || ""));
       const url = buildUrl(slug);
 
+      const cats = (p.categorias || "")
+  .split(",")
+  .map(c => c.trim())
+  .filter(Boolean);
+  
       return `
         <article class="card project-card" data-idx="${idx}" data-slug="${slug}" role="button" tabindex="0">
           <div class="project-card__media">
@@ -298,10 +303,13 @@
           <div class="project-card__body">
             <h3>${p.titulo || ""}</h3>
             <div class="project-card__meta">
+              <div class="project-card__categories">
+  ${cats.map(c => `<span class="badge">${c}</span>`).join("")}
+</div>
               <span class="project-card__tag">⏱ ${p.duracao || "-"}</span>
               <span class="project-card__tag">📍 ${p.local || "-"}</span>
               <a class="small" href="${url}" onclick="event.preventDefault()">ver detalhes</a>
-            </div>
+              </div>
           </div>
         </article>
       `;
