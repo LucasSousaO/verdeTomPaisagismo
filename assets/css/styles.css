@@ -603,6 +603,19 @@ body.modal-open{
   transition: transform .2s ease, box-shadow .2s ease;
 }
 
+.share-actions{
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 10px 0 16px;
+}
+.share-actions .cta{
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-weight: 650;
+}
+
+
 /* Desktop: modal com duas colunas (imagem | conteúdo) */
 @media (min-width: 900px){
 .modal-inner{

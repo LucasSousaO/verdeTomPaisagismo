@@ -89,6 +89,11 @@
 
       <div class="post-content">
         <h2 id="pmTitle" class="post-title"></h2>
+        <div class="share-actions">
+  <a id="shareWhatsApp" class="cta" href="#" target="_blank" rel="noopener">Compartilhar no WhatsApp</a>
+  <button id="copyLink" class="cta secondary" type="button">Copiar link</button>
+  <a class="cta secondary" href="https://www.instagram.com/" target="_blank" rel="noopener">Abrir Instagram</a>
+</div>
 
         <div class="post-meta">
           <img id="pmAuthorPhoto" class="post-meta__photo" alt="">
@@ -242,7 +247,38 @@
     }
 
     pmBody.textContent = post.conteudo || post.textoCentral || "";
-    document.body.classList.add("modal-open");
+    
+  // ===== SHARE (WhatsApp + copiar link) =====
+  const slug = (post.slug || slugify(post.titulo || ""));
+  const url = buildPostUrl(slug);
+
+  // garante que a URL no navegador reflete o post aberto
+  history.pushState(null, "", `#${encodeURIComponent(slug)}`);
+
+  const shareText = `Veja este post do Verde Tom: ${post.titulo || ""}\n${url}`;
+
+  const wa = document.getElementById("shareWhatsApp");
+  if (wa){
+    wa.href = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+  }
+
+  const btnCopy = document.getElementById("copyLink");
+  if (btnCopy){
+    btnCopy.onclick = async () => {
+      try{
+        await navigator.clipboard.writeText(url);
+        const old = btnCopy.textContent;
+        btnCopy.textContent = "Link copiado!";
+        setTimeout(() => btnCopy.textContent = old || "Copiar link", 1400);
+      } catch {
+        prompt("Copie o link:", url);
+      }
+    };
+  }
+  // ===== /SHARE =====
+
+  // trava scroll do fundo
+  document.body.classList.add("modal-open");
   }
 
   function closeModal(){
@@ -250,6 +286,7 @@
     modal.classList.remove("open");
     modal.setAttribute("aria-hidden", "true");
     document.body.classList.remove("modal-open");
+    history.pushState(null, "", window.location.href.split("#")[0]);
   }
 
   btnClose?.addEventListener("click", closeModal);
@@ -272,25 +309,26 @@
     grid.innerHTML = posts.map((p, idx) => {
       const previewBase = p.textoCentral || p.conteudo || "";
       const preview = truncateByDevice(previewBase);
+      const slug = (p.slug || slugify(p.titulo || ""));
+const postUrl = buildPostUrl(slug);
 
       return `
-        <article class="card blog-card" data-post-index="${idx}" role="button" tabindex="0">
+        <article class="card blog-card" data-post-index="${idx}" data-slug="${slug}" role="button" tabindex="0">
           <div class="blog-card__image">
             ${p.imagemUrl ? `<img src="${p.imagemUrl}" alt="${p.titulo || ""}">` : ""}
           </div>
 
-          <div class="blog-card__body">
-            <h3>${p.titulo || ""}</h3>
-            <p class="blog-card__preview">${preview}</p>
+  <div class="blog-card__body">
+      <h3>${p.titulo || ""}</h3>
+      <p class="blog-card__preview">${preview}</p>
 
-       <div></div> <!-- spacer para manter meta no rodapé -->
+      <div></div>
 
       <div class="blog-card__meta">
         ${p.autorFotoUrl ? `<img class="blog-card__avatar" src="${p.autorFotoUrl}" alt="${p.autor || ""}">` : `<div class="blog-card__avatar"></div>`}
-
         <div class="blog-card__meta-text">
           <div class="blog-card__author">${p.autor || ""}</div>
-          <div class="blog-card__more">ler mais</div>
+          <a class="blog-card__more" href="${postUrl}" onclick="event.preventDefault()">ler mais</a>
         </div>
       </div>
     </div>
@@ -298,28 +336,67 @@
       `;
     }).join("") || `<p class="small">Nenhum post publicado ainda.</p>`;
 
+    const hashSlug = decodeURIComponent((window.location.hash || "").replace("#","").trim());
+if (hashSlug){
+  openPostBySlug(hashSlug, posts);
+}
+
+window.addEventListener("hashchange", () => {
+  const s = decodeURIComponent((window.location.hash || "").replace("#","").trim());
+  if(!s) return;
+  openPostBySlug(s, posts);
+});
     // click no card inteiro
-    grid.addEventListener("click", (e) => {
-      const card = e.target.closest(".blog-card");
-      if (!card) return;
-      const i = Number(card.getAttribute("data-post-index"));
-      openModal(posts[i]);
-    });
+grid.addEventListener("click", (e) => {
+  const card = e.target.closest(".blog-card");
+  if (!card) return;
+
+  const i = Number(card.getAttribute("data-post-index"));
+  const slug = card.getAttribute("data-slug");
+
+  // atualiza a URL do navegador para permitir compartilhamento
+  history.pushState(null, "", `#${encodeURIComponent(slug)}`);
+
+  openModal(posts[i]);
+});
+
 
     // teclado (Enter / Espaço) no card
-    grid.addEventListener("keydown", (e) => {
-      if (e.key !== "Enter" && e.key !== " ") return;
-      const card = e.target.closest(".blog-card");
-      if (!card) return;
-      e.preventDefault();
-      const i = Number(card.getAttribute("data-post-index"));
-      openModal(posts[i]);
-    });
+grid.addEventListener("keydown", (e) => {
+  if (e.key !== "Enter" && e.key !== " ") return;
+  const card = e.target.closest(".blog-card");
+  if (!card) return;
+
+  e.preventDefault();
+  const i = Number(card.getAttribute("data-post-index"));
+  const slug = card.getAttribute("data-slug");
+  history.pushState(null, "", `#${encodeURIComponent(slug)}`);
+  openModal(posts[i]);
+});
 
   } catch(err){
     console.error(err);
   }
 })();
+function slugify(s){
+  return String(s || "")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+function buildPostUrl(slug){
+  const base = window.location.href.split("#")[0];
+  return `${base}#${encodeURIComponent(slug)}`;
+}
+
+function openPostBySlug(slug, posts){
+  const idx = posts.findIndex(p => (p.slug || slugify(p.titulo)) === slug);
+  if (idx >= 0) openModal(posts[idx]);
+}
+
 </script>
 
 </body>
