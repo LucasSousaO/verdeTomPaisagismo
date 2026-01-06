@@ -93,6 +93,12 @@
             <b>Local:</b> <span id="prLocal"></span>
           </div>
         </div>
+        <div class="project-share">
+        <a id="shareProjectWhatsApp" class="project-share__btn" target="_blank" rel="noopener">
+        Compartilhar no WhatsApp</a>
+        <button id="copyProjectLink" class="project-share__btn project-share__btn--secondary" type="button">
+        Copiar link</button>
+</div>
       </div>
     </div>
   </div>
@@ -217,6 +223,9 @@
   const prDuracao = document.getElementById("prDuracao");
   const prLocal = document.getElementById("prLocal");
 
+  const shareWA = document.getElementById("shareProjectWhatsApp");
+const btnCopy = document.getElementById("copyProjectLink");
+
   function setCompare(value){
     const v = Math.max(0, Math.min(100, Number(value)));
     prBefore.style.clipPath = `inset(0 ${100 - v}% 0 0)`;
@@ -284,6 +293,31 @@ compareBox?.addEventListener("pointerleave", endDrag);
     prRange.value = 50;
     setCompare(50);
 
+    // ===== SHARE (WhatsApp + copiar link) =====
+const slug = project.slug || slugify(project.titulo || "");
+const url = buildUrl(slug); // gera projetos.html#slug
+
+// texto do WhatsApp
+const shareText = `Veja este projeto do Verde Tom: ${project.titulo || ""}\n${url}`;
+
+if (shareWA){
+  shareWA.href = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+}
+
+if (btnCopy){
+  btnCopy.onclick = async () => {
+    try{
+      await navigator.clipboard.writeText(url);
+      const old = btnCopy.textContent;
+      btnCopy.textContent = "Link copiado!";
+      setTimeout(() => btnCopy.textContent = old || "Copiar link", 1400);
+    } catch {
+      prompt("Copie o link:", url);
+    }
+  };
+}
+// ===== /SHARE =====
+
     modal.classList.add("open");
     modal.setAttribute("aria-hidden", "false");
     lockBodyScroll();
@@ -293,6 +327,9 @@ compareBox?.addEventListener("pointerleave", endDrag);
     if(!modal) return;
     modal.classList.remove("open");
     modal.setAttribute("aria-hidden", "true");
+
+    if (btnCopy) btnCopy.onclick = null;
+
     unlockBodyScroll();
     history.pushState(null, "", window.location.href.split("#")[0]);
   }

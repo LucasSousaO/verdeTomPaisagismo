@@ -776,6 +776,31 @@ body.modal-open{
   align-self:flex-end;          /* garante canto inferior */
   white-space:nowrap;
 }
+.project-share{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin: 8px 0 14px;
+}
+
+.project-share__btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background: var(--brand);
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+  text-decoration:none;
+}
+
+.project-share__btn--secondary{
+  background:#fff;
+  color: var(--brand2);
+}
 
 .compare{
   position:relative;
