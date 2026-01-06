@@ -778,6 +778,7 @@ body.modal-open{
   border:1px solid var(--line);
   background:#f7f7f7;
   aspect-ratio: 16 / 9;
+  touch-action: pan-y;
 }
 
 .compare__img{
@@ -798,8 +799,11 @@ body.modal-open{
   inset:0;
   width:100%;
   height:100%;
-  opacity:0;
   cursor:ew-resize;
+    -webkit-appearance: none;
+  appearance: none;
+  opacity: 0.001; /* não deixe 0, em alguns mobiles buga o hitbox */
+  touch-action: none; /* o range captura o gesto */
 }
 
 .compare__handle{
@@ -968,5 +972,10 @@ body.modal-open{
     .modal-inner{ height: min(92vh, 860px); }
   .post-modal{ grid-template-rows: 220px 1fr; }
   .post-content{ padding: 16px 16px 22px; }
-    .compare{ aspect-ratio: 4 / 3; }
+    .compare{ 
+      aspect-ratio: 4 / 3; 
+  }
+    .compare__range{
+    opacity: 0.01;
+  }
 }
