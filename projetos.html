@@ -93,10 +93,6 @@
             <b>Local:</b> <span id="prLocal"></span>
           </div>
         </div>
-        <div class="share-actions">
-  <a id="shareWhatsApp" class="cta" href="#" target="_blank" rel="noopener">Compartilhar no WhatsApp</a>
-  <button id="copyLink" class="cta secondary" type="button">Copiar link</button>
-</div>
       </div>
     </div>
   </div>
@@ -290,35 +286,6 @@ compareBox?.addEventListener("pointerleave", endDrag);
 
     modal.classList.add("open");
     modal.setAttribute("aria-hidden", "false");
-    lockBodyScroll();
-  }
-  // ===== SHARE (WhatsApp + copiar link) =====
-    const slug = (post.slug || slugify(post.titulo || ""));
-    const url = buildPostUrl(slug);
-
-    history.pushState(null, "", `#${encodeURIComponent(slug)}`);
-
-    const shareText = `Veja este post do Verde Tom: ${post.titulo || ""}\n${url}`;
-
-    const wa = document.getElementById("shareWhatsApp");
-    if (wa){
-      wa.href = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
-    }
-
-    const btnCopy = document.getElementById("copyLink");
-    if (btnCopy){
-      btnCopy.onclick = async () => {
-        try{
-          await navigator.clipboard.writeText(url);
-          const old = btnCopy.textContent;
-          btnCopy.textContent = "Link copiado!";
-          setTimeout(() => btnCopy.textContent = old || "Copiar link", 1400);
-        } catch {
-          prompt("Copie o link:", url);
-        }
-      };
-    }
-    // ===== /SHARE =====
     lockBodyScroll();
   }
 
