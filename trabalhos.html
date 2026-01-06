@@ -36,7 +36,7 @@
 </button>
 
     <nav class="main-nav" id="mainNav" aria-label="Menu principal">
-      <a href="trabalhos.html">projetos</a>
+      <a href="/verdeTomPaisagismo">início</a>
       <a href="atuacao.html">atuação</a>
       <a href="sobre.html">sobre</a>
       <a href="blog.html">blog</a>
@@ -45,35 +45,60 @@
   </div>
 </header>
 
-  <main class="section">
-    <div class="container">
-      <h1 style="margin:0 0 10px">Trabalhos</h1>
-      <p class="small">Seleção de fotos. Para orçamento, use o formulário com cidade/serviço e envie pelo WhatsApp.</p>
+  <main>
+    <section class="section">
+  <div class="container">
+    <h1>Projetos</h1>
+    <p class="small">Antes e depois, com pedido, escopo e duração.</p>
 
-      <div class="hero-actions" style="margin:12px 0 16px">
-        <a class="cta" href="contato.html">Solicitar orçamento</a>
-        <span class="badge">Atendimento: BH • Nova Lima • Lagoa Santa</span>
+    <div id="projectsGrid" class="projects-grid"></div>
+  </div>
+</section>
+
+<!-- MODAL (fora do grid) -->
+<div id="projectModal" class="modal" aria-hidden="true">
+  <button class="modal-close" type="button" aria-label="Fechar">✕</button>
+
+  <div class="modal-inner modal-inner--project">
+    <div class="project-modal">
+      <h2 id="prTitle" class="project-modal__title"></h2>
+
+      <!-- Slider antes/depois -->
+      <div class="compare" id="compareBox">
+        <img id="prAfter" class="compare__img" alt="">
+        <img id="prBefore" class="compare__img compare__before" alt="">
+        <input id="prRange" class="compare__range" type="range" min="0" max="100" value="50" aria-label="Comparar antes e depois">
+        <div class="compare__handle" id="prHandle" aria-hidden="true"></div>
+
+        <div class="compare__labels" aria-hidden="true">
+          <span>DEPOIS</span>
+          <span>ANTES</span>
+        </div>
       </div>
 
-      <div class="gallery" aria-label="Galeria de trabalhos (clique para ampliar)">
-        <button class="thumb" type="button"><img src="assets/images/trabalhos/01.jpg" alt="Jardim residencial com maciços e acabamento" /><span class="tag">Residência</span></button>
-        <button class="thumb" type="button"><img src="assets/images/trabalhos/02.jpg" alt="Paisagismo em área comum com caminhos" /><span class="tag">Condomínio</span></button>
-        <button class="thumb" type="button"><img src="assets/images/trabalhos/03.jpg" alt="Canteiro com forrações e pedras decorativas" /><span class="tag">Canteiro</span></button>
-        <button class="thumb" type="button"><img src="assets/images/trabalhos/04.jpg" alt="Composição tropical com palmeiras e arbustos" /><span class="tag">Execução</span></button>
-
-        <button class="thumb" type="button"><img src="assets/images/trabalhos/05.jpg" alt="Jardim com flores e bordas definidas" /><span class="tag">Detalhes</span></button>
-        <button class="thumb" type="button"><img src="assets/images/trabalhos/06.jpg" alt="Paisagismo em fachada com espécies ornamentais" /><span class="tag">Fachada</span></button>
-        <button class="thumb" type="button"><img src="assets/images/trabalhos/07.jpg" alt="Área externa com vasos e vegetação" /><span class="tag">Vasos</span></button>
-        <button class="thumb" type="button"><img src="assets/images/trabalhos/08.jpg" alt="Jardim com caminhos e gramado" /><span class="tag">Gramado</span></button>
+      <!-- Texto fixo abaixo (da planilha) -->
+      <div class="project-modal__info">
+        <div class="info-row">
+          <div class="info-label">Pedido</div>
+          <div id="prPedido" class="info-value"></div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">Escopo</div>
+          <div id="prEscopo" class="info-value"></div>
+        </div>
+        <div class="info-row info-row--small">
+          <div class="info-pill">
+            <b>Duração:</b> <span id="prDuracao"></span>
+          </div>
+          <div class="info-pill">
+            <b>Local:</b> <span id="prLocal"></span>
+          </div>
+        </div>
       </div>
     </div>
+  </div>
+</div>
 
-    <div class="modal" id="imgModal" aria-hidden="true">
-      <button class="modal-close" id="imgModalClose" aria-label="Fechar">✕</button>
-      <div class="modal-inner">
-        <img id="imgModalImg" src="" alt="" />
-      </div>
-    </div>
   </main>
 
 <footer class="site-footer">
@@ -115,5 +140,201 @@
 <a href="/verdeTomPaisagismo/contato.html" class="floating-cta" aria-label="Enviar proposta">Entre em contato</a>
 
   <script src="assets/js/main.js"></script>
+  <script>
+(async function(){
+  const CSV_URL = "COLE_AQUI_O_CSV_DA_ABA_PROJETOS";
+
+  let projects = [];
+  let scrollY = 0;
+
+  function lockBodyScroll(){
+    scrollY = window.scrollY || 0;
+    document.body.classList.add("modal-open");
+    document.body.style.top = `-${scrollY}px`;
+  }
+  function unlockBodyScroll(){
+    document.body.classList.remove("modal-open");
+    document.body.style.top = "";
+    window.scrollTo(0, scrollY);
+  }
+
+  function slugify(s){
+    return String(s || "")
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+  }
+  function buildUrl(slug){
+    const base = window.location.href.split("#")[0];
+    return `${base}#${encodeURIComponent(slug)}`;
+  }
+
+  function parseCSV(text){
+    const rows = [];
+    let row = [];
+    let cur = "";
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i++){
+      const c = text[i];
+      const n = text[i+1];
+
+      if (c === '"' && inQuotes && n === '"'){ cur += '"'; i++; continue; }
+      if (c === '"'){ inQuotes = !inQuotes; continue; }
+
+      if (c === ',' && !inQuotes){ row.push(cur); cur = ""; continue; }
+      if ((c === '\n' || c === '\r') && !inQuotes){
+        if (cur.length || row.length){ row.push(cur); rows.push(row); }
+        cur = ""; row = [];
+        if (c === '\r' && n === '\n') i++;
+        continue;
+      }
+      cur += c;
+    }
+    if (cur.length || row.length){ row.push(cur); rows.push(row); }
+
+    const headers = rows.shift().map(h => h.replace(/^\uFEFF/, "").trim());
+    return rows
+      .filter(r => r.some(v => String(v||"").trim().length))
+      .map(r => {
+        const obj = {};
+        headers.forEach((h, idx) => obj[h] = String(r[idx] ?? "").trim());
+        return obj;
+      });
+  }
+
+  // Modal refs
+  const modal = document.getElementById("projectModal");
+  const btnClose = modal?.querySelector(".modal-close");
+  const prTitle = document.getElementById("prTitle");
+  const prAfter = document.getElementById("prAfter");
+  const prBefore = document.getElementById("prBefore");
+  const prRange = document.getElementById("prRange");
+  const prHandle = document.getElementById("prHandle");
+  const prPedido = document.getElementById("prPedido");
+  const prEscopo = document.getElementById("prEscopo");
+  const prDuracao = document.getElementById("prDuracao");
+  const prLocal = document.getElementById("prLocal");
+
+  function setCompare(value){
+    const v = Math.max(0, Math.min(100, Number(value)));
+    prBefore.style.clipPath = `inset(0 ${100 - v}% 0 0)`;
+    prHandle.style.left = `${v}%`;
+  }
+
+  function openModal(project){
+    if(!modal) return;
+
+    const slug = project.slug || slugify(project.titulo || "");
+    history.pushState(null, "", `#${encodeURIComponent(slug)}`);
+
+    prTitle.textContent = project.titulo || "";
+    prAfter.src = project.imagemDepoisUrl || "";
+    prAfter.alt = (project.titulo ? `Depois - ${project.titulo}` : "Depois");
+    prBefore.src = project.imagemAntesUrl || "";
+    prBefore.alt = (project.titulo ? `Antes - ${project.titulo}` : "Antes");
+
+    prPedido.textContent = project.pedido || "";
+    prEscopo.textContent = project.escopo || "";
+    prDuracao.textContent = project.duracao || "-";
+    prLocal.textContent = project.local || "-";
+
+    prRange.value = 50;
+    setCompare(50);
+
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
+    lockBodyScroll();
+  }
+
+  function closeModal(){
+    if(!modal) return;
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden", "true");
+    unlockBodyScroll();
+    history.pushState(null, "", window.location.href.split("#")[0]);
+  }
+
+  btnClose?.addEventListener("click", closeModal);
+  modal?.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+
+  // impede scroll “vazar” quando estiver no fundo cinza (desktop)
+  modal?.addEventListener("wheel", (e) => { if (e.target === modal) e.preventDefault(); }, { passive:false });
+  modal?.addEventListener("touchmove", (e) => { if (e.target === modal) e.preventDefault(); }, { passive:false });
+
+  prRange?.addEventListener("input", (e) => setCompare(e.target.value));
+
+  function openBySlug(slug){
+    const s = decodeURIComponent(String(slug || "")).trim();
+    if(!s) return;
+    const idx = projects.findIndex(p => (p.slug || slugify(p.titulo || "")) === s);
+    if(idx >= 0) openModal(projects[idx]);
+  }
+
+  try{
+    const res = await fetch(CSV_URL, { cache:"no-store" });
+    if(!res.ok) throw new Error("Falha ao buscar CSV: " + res.status);
+    const csv = await res.text();
+
+    projects = parseCSV(csv)
+      .filter(p => (p.status || "").toLowerCase() === "publicado");
+
+    const grid = document.getElementById("projectsGrid");
+    if(!grid) return;
+
+    grid.innerHTML = projects.map((p, idx) => {
+      const slug = (p.slug || slugify(p.titulo || ""));
+      const url = buildUrl(slug);
+
+      return `
+        <article class="card project-card" data-idx="${idx}" data-slug="${slug}" role="button" tabindex="0">
+          <div class="project-card__media">
+            <img class="img-after" src="${p.imagemDepoisUrl || ""}" alt="${p.titulo ? `Depois - ${p.titulo}` : "Depois"}" loading="lazy">
+            <img class="img-before" src="${p.imagemAntesUrl || ""}" alt="${p.titulo ? `Antes - ${p.titulo}` : "Antes"}" loading="lazy">
+          </div>
+          <div class="project-card__body">
+            <h3>${p.titulo || ""}</h3>
+            <div class="project-card__meta">
+              <span class="project-card__tag">⏱ ${p.duracao || "-"}</span>
+              <span class="project-card__tag">📍 ${p.local || "-"}</span>
+              <a class="small" href="${url}" onclick="event.preventDefault()">ver detalhes</a>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join("") || `<p class="small">Nenhum projeto publicado ainda.</p>`;
+
+    grid.addEventListener("click", (e) => {
+      const card = e.target.closest(".project-card");
+      if(!card) return;
+      openModal(projects[Number(card.dataset.idx)]);
+    });
+
+    grid.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      const card = e.target.closest(".project-card");
+      if(!card) return;
+      e.preventDefault();
+      openModal(projects[Number(card.dataset.idx)]);
+    });
+
+    // abre por hash
+    const hash = (window.location.hash || "").replace("#","").trim();
+    if(hash) openBySlug(hash);
+
+    window.addEventListener("hashchange", () => {
+      const h = (window.location.hash || "").replace("#","").trim();
+      if(h) openBySlug(h);
+    });
+
+  } catch(err){
+    console.error(err);
+  }
+})();
+</script>
+
 </body>
 </html>
