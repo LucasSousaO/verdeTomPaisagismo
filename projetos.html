@@ -192,7 +192,7 @@ function resolveImageSrc(input){
   // Caminho relativo do repo
   const cleaned = raw.replace(/^\.?\//, ""); // remove "./" ou "/" no início
   return getRepoBaseUrl() + cleaned;
-
+}
   
   function lockBodyScroll(){
     scrollY = window.scrollY || 0;
@@ -253,66 +253,61 @@ function resolveImageSrc(input){
   }
 
   // Modal refs
-  const modal = document.getElementById("projectModal");
-  const btnClose = modal?.querySelector(".modal-close");
-  const prTitle = document.getElementById("prTitle");
-  const prAfter = document.getElementById("prAfter");
-  const prBefore = document.getElementById("prBefore");
-  const prRange = document.getElementById("prRange");
-  const prHandle = document.getElementById("prHandle");
-  const prPedido = document.getElementById("prPedido");
-  const prEscopo = document.getElementById("prEscopo");
-  const prDuracao = document.getElementById("prDuracao");
-  const prLocal = document.getElementById("prLocal");
-  const prPrev = document.getElementById("prPrev");
+const modal = document.getElementById("projectModal");
+const btnClose = modal?.querySelector(".modal-close");
+const prTitle = document.getElementById("prTitle");
+const prAfter = document.getElementById("prAfter");
+const prBefore = document.getElementById("prBefore");
+const prRange = document.getElementById("prRange");
+const prHandle = document.getElementById("prHandle");
+const prPedido = document.getElementById("prPedido");
+const prEscopo = document.getElementById("prEscopo");
+const prDuracao = document.getElementById("prDuracao");
+const prLocal = document.getElementById("prLocal");
+
+const prPrev = document.getElementById("prPrev");
 const prNext = document.getElementById("prNext");
 const prCount = document.getElementById("prCount");
-const compareBox = document.getElementById("compareBox");
 
-  const shareWA = document.getElementById("shareProjectWhatsApp");
+const compareBox = document.getElementById("compareBox"); // ✅ só uma vez
+
+const shareWA = document.getElementById("shareProjectWhatsApp");
 const btnCopy = document.getElementById("copyProjectLink");
 
-  function setCompare(value){
-    const v = Math.max(0, Math.min(100, Number(value)));
-    prBefore.style.clipPath = `inset(0 ${100 - v}% 0 0)`;
-    prHandle.style.left = `${v}%`;
-  }
-
- const compareBox = document.getElementById("compareBox");
+function setCompare(value){
+  const v = Math.max(0, Math.min(100, Number(value)));
+  prBefore.style.clipPath = `inset(0 ${100 - v}% 0 0)`;
+  prHandle.style.left = `${v}%`;
+}
 
 function setCompareFromClientX(clientX){
   if (!compareBox || !prRange) return;
-
   const r = compareBox.getBoundingClientRect();
   if (!r.width) return;
-
   const x = Math.max(0, Math.min(r.width, clientX - r.left));
   const v = (x / r.width) * 100;
-
   prRange.value = v;
   setCompare(v);
 }
 
 let dragging = false;
 
-function startDrag(e){
-  if (!modal?.classList.contains("open")) return; // só quando modal estiver aberto
+compareBox?.addEventListener("pointerdown", (e) => {
+  if (!modal?.classList.contains("open")) return;
+  e.preventDefault();
   dragging = true;
   compareBox.setPointerCapture?.(e.pointerId);
   setCompareFromClientX(e.clientX);
-}
+});
 
-function moveDrag(e){
+compareBox?.addEventListener("pointermove", (e) => {
   if (!dragging) return;
   setCompareFromClientX(e.clientX);
-}
+});
 
 function endDrag(){
   dragging = false;
 }
-
-compareBox?.addEventListener("pointerdown", startDrag);
-compareBox?.addEventListener("pointermove", moveDrag);
 compareBox?.addEventListener("pointerup", endDrag);
 compareBox?.addEventListener("pointercancel", endDrag);
 compareBox?.addEventListener("lostpointercapture", endDrag);
@@ -388,53 +383,32 @@ function goPrev(){ applySlide(slideIndex - 1); }
 function goNext(){ applySlide(slideIndex + 1); }
 
 function openModal(project){
-  if(!modal) return;
+  if (!modal) return;
 
-  const slug = project.slug?.trim() || slugify(project.titulo || "");
-
+  // slug (prioriza o da planilha)
+  const slug = String(project.slug || "").trim() || slugify(project.titulo || "");
   history.pushState(null, "", `#${encodeURIComponent(slug)}`);
 
+  // texto
   prTitle.textContent = project.titulo || "";
+  prPedido.textContent = project.pedido || "";
+  prEscopo.textContent = project.escopo || "";
+  prDuracao.textContent = project.duracao || "-";
+  prLocal.textContent = project.local || "-";
 
-// imagem depois (sempre obrigatória)
-prAfter.src = resolveImageSrc(after);
-prAfter.alt = project.titulo ? `Projeto ${project.titulo}` : "Projeto";
+  // monta slides 1..5 (usa imagemDepoisUrlX / imagemAntesUrlX)
+  slides = collectSlides(project);
+  slideIndex = 0;
 
-// monta slides 1..5
-slides = collectSlides(project);
-slideIndex = 0;
+  if (!slides.length){
+    console.warn("Projeto publicado sem imagemDepoisUrl1..5:", project);
+    return;
+  }
 
-// fallback: se não tiver slide nenhum, não abre (ou abre sem imagem)
-if (!slides.length){
-  console.warn("Projeto publicado sem imagemDepoisUrl1..5:", project);
-  return;
-}
+  // aplica o primeiro slide (respeita compare vs single)
+  applySlide(0);
 
-// aplica primeiro slide
-applySlide(0);
-
-// CASO 1 — TEM antes/depois → comparador
-if (before) {
-  prBefore.src = resolveImageSrc(before);
-  prBefore.style.display = "block";
-  prRange.style.display = "block";
-  prHandle.style.display = "block";
-  compareBox.dataset.mode = "compare";
-
-}
-// CASO 2 — SÓ imagem final → imagem estática
-else {
-  prBefore.src = "";
-  prBefore.style.display = "none";
-  prRange.style.display = "none";
-  prHandle.style.display = "none";
-  compareBox.dataset.mode = "single";
-
-  // remove qualquer recorte
-  prAfter.style.clipPath = "none";
-}
-
-  // SHARE
+  // SHARE (WhatsApp + copiar link)
   const url = buildUrl(slug);
   const shareText = `Veja este projeto do Verde Tom: ${project.titulo || ""}\n${url}`;
 
@@ -444,30 +418,42 @@ else {
 
   if (btnCopy){
     btnCopy.onclick = async () => {
+      const old = btnCopy.textContent;
       try{
         await navigator.clipboard.writeText(url);
         btnCopy.textContent = "Link copiado!";
-        setTimeout(() => btnCopy.textContent = "Copiar link", 1400);
+        setTimeout(() => btnCopy.textContent = old || "Copiar link", 1400);
       } catch {
         prompt("Copie o link:", url);
       }
     };
   }
 
+  // abre modal
   modal.classList.add("open");
   modal.setAttribute("aria-hidden", "false");
   lockBodyScroll();
 }
 
-prPrev?.addEventListener("click", (e) => { e.stopPropagation(); goPrev(); });
-prNext?.addEventListener("click", (e) => { e.stopPropagation(); goNext(); });
+prPrev?.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  goPrev();
+});
 
-// Teclado (quando modal aberto)
+prNext?.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  goNext();
+});
+
+// teclado (quando modal aberto)
 document.addEventListener("keydown", (e) => {
   if (!modal?.classList.contains("open")) return;
   if (e.key === "ArrowLeft") goPrev();
   if (e.key === "ArrowRight") goNext();
 });
+
 
   function closeModal(){
     if(!modal) return;
