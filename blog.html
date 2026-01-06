@@ -157,6 +157,22 @@
 (async function(){
   const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdP_h8M1SSBrqtxsH0j0V6eQ9MN66HX4JhSG0KgP_wyGVZmVAfzMX_J-MFPqc90c54N4vpkjakM0pj/pub?gid=0&single=true&output=csv";
 
+  let posts = []; // ✅ fica acessível para openPostBySlug/hash
+
+  function slugify(s){
+    return String(s || "")
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+  }
+
+  function buildPostUrl(slug){
+    const base = window.location.href.split("#")[0];
+    return `${base}#${encodeURIComponent(slug)}`;
+  }
+
   function parseCSV(text){
     const rows = [];
     let row = [];
@@ -171,17 +187,14 @@
       if (c === '"'){ inQuotes = !inQuotes; continue; }
 
       if (c === ',' && !inQuotes){
-        row.push(cur);
-        cur = "";
-        continue;
+        row.push(cur); cur = ""; continue;
       }
       if ((c === '\n' || c === '\r') && !inQuotes){
         if (cur.length || row.length){
           row.push(cur);
           rows.push(row);
         }
-        cur = "";
-        row = [];
+        cur = ""; row = [];
         if (c === '\r' && n === '\n') i++;
         continue;
       }
@@ -210,7 +223,7 @@
     return clean.slice(0, limit).trimEnd() + "…";
   }
 
-  // Modal helpers (o modal precisa existir FORA do blogGrid)
+  // Modal elements
   const modal = document.getElementById("postModal");
   const btnClose = modal?.querySelector(".modal-close");
   const pmImage = document.getElementById("pmImage");
@@ -222,8 +235,10 @@
 
   function openModal(post){
     if(!modal) return;
+
     modal.classList.add("open");
     modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("modal-open");
 
     pmTitle.textContent = post.titulo || "";
     pmAuthor.textContent = post.autor || "";
@@ -246,38 +261,34 @@
     }
 
     pmBody.textContent = post.conteudo || post.textoCentral || "";
-    
-  // ===== SHARE (WhatsApp + copiar link) =====
-  const slug = (post.slug || slugify(post.titulo || ""));
-  const url = buildPostUrl(slug);
 
-  // garante que a URL no navegador reflete o post aberto
-  history.pushState(null, "", `#${encodeURIComponent(slug)}`);
+    // ===== SHARE (WhatsApp + copiar link) =====
+    const slug = (post.slug || slugify(post.titulo || ""));
+    const url = buildPostUrl(slug);
 
-  const shareText = `Veja este post do Verde Tom: ${post.titulo || ""}\n${url}`;
+    history.pushState(null, "", `#${encodeURIComponent(slug)}`);
 
-  const wa = document.getElementById("shareWhatsApp");
-  if (wa){
-    wa.href = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
-  }
+    const shareText = `Veja este post do Verde Tom: ${post.titulo || ""}\n${url}`;
 
-  const btnCopy = document.getElementById("copyLink");
-  if (btnCopy){
-    btnCopy.onclick = async () => {
-      try{
-        await navigator.clipboard.writeText(url);
-        const old = btnCopy.textContent;
-        btnCopy.textContent = "Link copiado!";
-        setTimeout(() => btnCopy.textContent = old || "Copiar link", 1400);
-      } catch {
-        prompt("Copie o link:", url);
-      }
-    };
-  }
-  // ===== /SHARE =====
+    const wa = document.getElementById("shareWhatsApp");
+    if (wa){
+      wa.href = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+    }
 
-  // trava scroll do fundo
-  document.body.classList.add("modal-open");
+    const btnCopy = document.getElementById("copyLink");
+    if (btnCopy){
+      btnCopy.onclick = async () => {
+        try{
+          await navigator.clipboard.writeText(url);
+          const old = btnCopy.textContent;
+          btnCopy.textContent = "Link copiado!";
+          setTimeout(() => btnCopy.textContent = old || "Copiar link", 1400);
+        } catch {
+          prompt("Copie o link:", url);
+        }
+      };
+    }
+    // ===== /SHARE =====
   }
 
   function closeModal(){
@@ -292,12 +303,20 @@
   modal?.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
 
+  function openPostBySlug(slug){
+    const s = decodeURIComponent(String(slug || "")).trim();
+    if(!s) return;
+
+    const idx = posts.findIndex(p => (p.slug || slugify(p.titulo || "")) === s);
+    if (idx >= 0) openModal(posts[idx]);
+  }
+
   try{
     const res = await fetch(CSV_URL, { cache: "no-store" });
     if(!res.ok) throw new Error("Falha ao buscar CSV: " + res.status);
     const csv = await res.text();
 
-    const posts = parseCSV(csv)
+    posts = parseCSV(csv)
       .filter(p => (p.status || "").toLowerCase() === "publicado");
 
     posts.sort((a,b) => (b.data || "").localeCompare(a.data || ""));
@@ -309,7 +328,7 @@
       const previewBase = p.textoCentral || p.conteudo || "";
       const preview = truncateByDevice(previewBase);
       const slug = (p.slug || slugify(p.titulo || ""));
-const postUrl = buildPostUrl(slug);
+      const postUrl = buildPostUrl(slug);
 
       return `
         <article class="card blog-card" data-post-index="${idx}" data-slug="${slug}" role="button" tabindex="0">
@@ -317,89 +336,63 @@ const postUrl = buildPostUrl(slug);
             ${p.imagemUrl ? `<img src="${p.imagemUrl}" alt="${p.titulo || ""}">` : ""}
           </div>
 
-  <div class="blog-card__body">
-      <h3>${p.titulo || ""}</h3>
-      <p class="blog-card__preview">${preview}</p>
+          <div class="blog-card__body">
+            <h3>${p.titulo || ""}</h3>
+            <p class="blog-card__preview">${preview}</p>
+            <div></div>
 
-      <div></div>
-
-      <div class="blog-card__meta">
-        ${p.autorFotoUrl ? `<img class="blog-card__avatar" src="${p.autorFotoUrl}" alt="${p.autor || ""}">` : `<div class="blog-card__avatar"></div>`}
-        <div class="blog-card__meta-text">
-          <div class="blog-card__author">${p.autor || ""}</div>
-          <a class="blog-card__more" href="${postUrl}" onclick="event.preventDefault()">ler mais</a>
-        </div>
-      </div>
-    </div>
-  </article>
+            <div class="blog-card__meta">
+              ${p.autorFotoUrl
+                ? `<img class="blog-card__avatar" src="${p.autorFotoUrl}" alt="${p.autor || ""}">`
+                : `<div class="blog-card__avatar"></div>`
+              }
+              <div class="blog-card__meta-text">
+                <div class="blog-card__author">${p.autor || ""}</div>
+                <a class="blog-card__more" href="${postUrl}" onclick="event.preventDefault()">ler mais</a>
+              </div>
+            </div>
+          </div>
+        </article>
       `;
     }).join("") || `<p class="small">Nenhum post publicado ainda.</p>`;
 
-    // click no card inteiro
-grid.addEventListener("click", (e) => {
-  const card = e.target.closest(".blog-card");
-  if (!card) return;
+    grid.addEventListener("click", (e) => {
+      const card = e.target.closest(".blog-card");
+      if (!card) return;
 
-  const i = Number(card.getAttribute("data-post-index"));
-  const slug = card.getAttribute("data-slug");
+      const i = Number(card.getAttribute("data-post-index"));
+      const slug = card.getAttribute("data-slug");
+      history.pushState(null, "", `#${encodeURIComponent(slug)}`);
+      openModal(posts[i]);
+    });
 
-  // atualiza a URL do navegador para permitir compartilhamento
-  history.pushState(null, "", `#${encodeURIComponent(slug)}`);
+    grid.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      const card = e.target.closest(".blog-card");
+      if (!card) return;
 
-  openModal(posts[i]);
-});
+      e.preventDefault();
+      const i = Number(card.getAttribute("data-post-index"));
+      const slug = card.getAttribute("data-slug");
+      history.pushState(null, "", `#${encodeURIComponent(slug)}`);
+      openModal(posts[i]);
+    });
 
+    // ✅ abre automaticamente se tiver #slug na URL
+    const hashSlug = decodeURIComponent((window.location.hash || "").replace("#","").trim());
+    if (hashSlug) openPostBySlug(hashSlug);
 
-    // teclado (Enter / Espaço) no card
-grid.addEventListener("keydown", (e) => {
-  if (e.key !== "Enter" && e.key !== " ") return;
-  const card = e.target.closest(".blog-card");
-  if (!card) return;
-
-  e.preventDefault();
-  const i = Number(card.getAttribute("data-post-index"));
-  const slug = card.getAttribute("data-slug");
-  history.pushState(null, "", `#${encodeURIComponent(slug)}`);
-  openModal(posts[i]);
-});
+    window.addEventListener("hashchange", () => {
+      const s = decodeURIComponent((window.location.hash || "").replace("#","").trim());
+      if (s) openPostBySlug(s);
+    });
 
   } catch(err){
     console.error(err);
   }
-  function slugify(s){
-  return String(s || "")
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
-
-function buildPostUrl(slug){
-  const base = window.location.href.split("#")[0];
-  return `${base}#${encodeURIComponent(slug)}`;
-}
-
-  function openPostBySlug(slug){
-    const s = decodeURIComponent(String(slug || "")).trim();
-    if(!s) return;
-
-    const idx = posts.findIndex(p => (p.slug || slugify(p.titulo || "")) === s);
-    if (idx >= 0) openModal(posts[idx]);
-  }
-
-  // depois que grid.innerHTML foi montado:
-  const hashSlug = decodeURIComponent((window.location.hash || "").replace("#","").trim());
-  if (hashSlug) openPostBySlug(hashSlug);
-
-  window.addEventListener("hashchange", () => {
-    const s = decodeURIComponent((window.location.hash || "").replace("#","").trim());
-    if (s) openPostBySlug(s);
-  });
-
 })();
-
 </script>
+
 
 </body>
 </html>
