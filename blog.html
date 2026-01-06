@@ -10,7 +10,7 @@
   <link rel="canonical" href="https://SEUUSUARIO.github.io/SEUREPO/blog.html" />
   <meta name="robots" content="index,follow" />
 
-  <link rel="icon" href="assets/images/logo.png" />
+  <link rel="icon" href="assets/images/logo.webp" />
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
 
@@ -81,23 +81,39 @@
 
 <script>
 (async function(){
-  const ENDPOINT = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdP_h8M1SSBrqtxsH0j0V6eQ9MN66HX4JhSG0KgP_wyGVZmVAfzMX_J-MFPqc90c54N4vpkjakM0pj/pub?gid=0&single=true&output=csv";
-  const res = await fetch(ENDPOINT);
-  const csv = await res.text();
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdP_h8M1SSBrqtxsH0j0V6eQ9MN66HX4JhSG0KgP_wyGVZmVAfzMX_J-MFPqc90c54N4vpkjakM0pj/pub?gid=0&single=true&output=csv";
+function parseCSV(text){
+    const lines = text.trim().split("\n");
+    const headers = lines.shift().split(",");
 
+    return lines.map(line => {
+      const values = line.split(",");
+      const obj = {};
+      headers.forEach((h, i) => obj[h.trim()] = (values[i] || "").trim());
+      return obj;
+    });
+  }
 
-  const grid = document.getElementById("blogGrid");
-  grid.innerHTML = data.posts.map(p => `
-    <article class="card">
-      <img src="${p.imagemUrl}" alt="${p.titulo}" style="border-radius:12px; margin-bottom:12px;">
-      <h3 style="margin:0 0 8px;">${p.titulo}</h3>
-      <p class="small" style="margin:0 0 14px;">${p.textoCentral}</p>
-      <div style="display:flex; align-items:center; gap:10px;">
-        <img src="${p.autorFotoUrl}" alt="${p.autor}" style="width:34px;height:34px;border-radius:999px;object-fit:cover;">
-        <span class="small">${p.autor}</span>
-      </div>
-    </article>
-  `).join("");
+  try{
+    const res = await fetch(CSV_URL, { cache: "no-store" });
+    if(!res.ok) throw new Error("Erro ao buscar CSV");
+
+    const csv = await res.text();
+    const posts = parseCSV(csv)
+      .filter(p => (p.status || "").toLowerCase() === "publicado");
+
+    const grid = document.getElementById("blogGrid");
+    grid.innerHTML = posts.map(p => `
+      <article class="card">
+        <img src="${p.imagemUrl}" alt="${p.titulo}">
+        <h3>${p.titulo}</h3>
+        <p>${p.textoCentral}</p>
+      </article>
+    `).join("");
+
+  } catch(err){
+    console.error(err);
+  }
 })();
 </script>
 
