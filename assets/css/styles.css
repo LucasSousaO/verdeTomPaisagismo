@@ -670,14 +670,22 @@ body.modal-open{
 }
 /* Projects */
 .projects-grid{
-  display:grid;
+  display: grid;
+  gap: 18px;
+
+  /* responsivo */
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap:14px;
+  align-items: start;
+
+  /* evita "card gigante" quando tiver só 1 */
+  justify-items: start;
 }
 
 .project-card{
-  cursor:pointer;
-  overflow:hidden;
+  cursor: pointer;
+  overflow: hidden;
+  width: 100%;
+  max-width: 420px; /* evita card gigante quando tiver 1 */
 }
 
 .project-card__media{
@@ -849,7 +857,17 @@ body.modal-open{
 .thumb--static .tag{
   opacity: .8;
 }
+/* em telas grandes, força o limite de 3 colunas */
+@media (min-width: 1024px){
+.projects-grid{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    justify-items: stretch; /* agora preenche a coluna */
+  }
 
+  .project-card{
+    max-width: none; /* deixa o card ocupar a coluna */
+  }
+}
 /* telas grandes → mais colunas */
 @media (min-width: 1100px){
   .gallery-grid{
