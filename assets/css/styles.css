@@ -304,6 +304,15 @@ img{ max-width:100%; height:auto; display:block; }
   border-radius:999px;
   font-size:.85rem;
 }
+.gallery .thumb{
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  display: block;
+}
 
 .hr{ border-top:1px solid var(--line); margin:18px 0; }
 

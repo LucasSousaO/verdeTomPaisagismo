@@ -86,7 +86,7 @@
         <h2>Conheça</h2>
         <p>Uma seleção curta para você entender estilo, acabamento e variedade de aplicações.</p>
 
-        <div class="gallery" aria-label="Galeria de trabalhos (clique para ampliar)">
+        <div id="homeProjects" class="gallery" aria-label="Galeria de trabalhos (clique para ver o projeto)"></div>
           <button class="thumb thumb--static" type="button" aria-disabled="true">
             <img src="assets/images/trabalhos/jardim.webp" alt="Paisagismo residencial com maciços e forrações" />
             <span class="tag">Residência</span>
@@ -246,5 +246,122 @@
     <script>
     document.getElementById("year").textContent = new Date().getFullYear();
   </script>
+  <script>
+(async function(){
+  // ⚠️ use o MESMO CSV dos projetos.html (ajuste o gid se for outro)
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdP_h8M1SSBrqtxsH0j0V6eQ9MN66HX4JhSG0KgP_wyGVZmVAfzMX_J-MFPqc90c54N4vpkjakM0pj/pub?gid=394534294&single=true&output=csv";
+
+  const grid = document.getElementById("homeProjects");
+  if (!grid) return;
+
+  function slugify(s){
+    return String(s || "")
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+  }
+
+  function isAbsoluteUrl(v){
+    return /^https?:\/\//i.test(String(v || "").trim());
+  }
+
+  function getRepoBaseUrl(){
+    return "https://lucassousao.github.io/verdeTomPaisagismo/";
+  }
+
+  function resolveImageSrc(input){
+    const raw = String(input || "").trim();
+    if (!raw) return "";
+    if (isAbsoluteUrl(raw)) return raw;
+    const cleaned = raw.replace(/^\.?\//, "");
+    return getRepoBaseUrl() + cleaned;
+  }
+
+  function parseCSV(text){
+    const rows = [];
+    let row = [];
+    let cur = "";
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i++){
+      const c = text[i];
+      const n = text[i+1];
+
+      if (c === '"' && inQuotes && n === '"'){ cur += '"'; i++; continue; }
+      if (c === '"'){ inQuotes = !inQuotes; continue; }
+
+      if (c === ',' && !inQuotes){ row.push(cur); cur = ""; continue; }
+      if ((c === '\n' || c === '\r') && !inQuotes){
+        if (cur.length || row.length){ row.push(cur); rows.push(row); }
+        cur = ""; row = [];
+        if (c === '\r' && n === '\n') i++;
+        continue;
+      }
+      cur += c;
+    }
+    if (cur.length || row.length){ row.push(cur); rows.push(row); }
+
+    const headers = rows.shift().map(h => h.replace(/^\uFEFF/, "").trim());
+    return rows
+      .filter(r => r.some(v => String(v||"").trim().length))
+      .map(r => {
+        const obj = {};
+        headers.forEach((h, idx) => obj[h] = String(r[idx] ?? "").trim());
+        return obj;
+      });
+  }
+
+  function pickCoverImage(p){
+    // prioridade: imagemDepoisUrl1 (igual projetos.html)
+    const after1 = String(p.imagemDepoisUrl1 || "").trim();
+    if (after1) return resolveImageSrc(after1);
+
+    // fallback: imagemUrl (se você tiver essa coluna)
+    const img = String(p.imagemUrl || "").trim();
+    if (img) return resolveImageSrc(img);
+
+    return "";
+  }
+
+  try{
+    const res = await fetch(CSV_URL, { cache: "no-store" });
+    if (!res.ok) throw new Error("Falha ao buscar CSV: " + res.status);
+    const csv = await res.text();
+
+    const projects = parseCSV(csv)
+      .filter(p => (p.status || "").toLowerCase() === "publicado");
+
+    // se você já tiver uma coluna de ordem/data, pode ordenar aqui.
+    // Exemplo: mais recentes primeiro:
+    // projects.sort((a,b) => (b.data || "").localeCompare(a.data || ""));
+
+    const top4 = projects.slice(0, 4);
+
+    grid.innerHTML = top4.map(p => {
+      const slug = String(p.slug || "").trim() || slugify(p.titulo || "");
+      const href = `projetos.html#${encodeURIComponent(slug)}`;
+      const imgSrc = pickCoverImage(p);
+      const tag = (p.categorias || "").split(",").map(s => s.trim()).filter(Boolean)[0] || "Projeto";
+      const alt = p.titulo ? `Projeto: ${p.titulo}` : "Projeto de paisagismo";
+
+      // usa <a> (melhor semântica pra navegação)
+      return `
+        <a class="thumb" href="${href}" aria-label="Ver projeto ${p.titulo || ""}">
+          <img src="${imgSrc}" alt="${alt}" loading="lazy" />
+          <span class="tag">${tag}</span>
+        </a>
+      `;
+    }).join("");
+
+  } catch (err){
+    console.error(err);
+    // fallback simples
+    grid.innerHTML = "";
+  }
+})();
+</script>
+
 </body>
 </html>
