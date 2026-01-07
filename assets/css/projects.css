@@ -353,7 +353,7 @@
   font-size:.92rem;
   height: fit-content;
 }
-.is-hidden { display: none !important; }
+.is-hidden { display: contents !important; }
 
 
 /* em telas grandes, força o limite de 3 colunas */
