@@ -386,11 +386,11 @@ function applySlide(idx){
   const showNext = hasNav && slideIndex < (slides.length - 1);
 
   if (prPrev){
-    prPrev.style.display = showPrev ? "flex" : "none";
+    prPrev.style.display = showPrev ? "flex" : "contents";
     prPrev.disabled = !showPrev;
   }
   if (prNext){
-    prNext.style.display = showNext ? "flex" : "none";
+    prNext.style.display = showNext ? "flex" : "contents";
     prNext.disabled = !showNext;
   }
 }
