@@ -373,7 +373,7 @@
     opacity: 0.01;
   }
     .compare-wrapper {
-    grid-template-columns: 32px 1fr 32px;
+    grid-template-columns: none;
   }
 
   .compare-nav {
@@ -381,9 +381,7 @@
     height: 32px;
     font-size: 20px;
   }
-    .compare-controls{
-    display: grid;
-  }
+  
 }
 
 /* 3) No mobile, botões um embaixo do outro (fica melhor e evita conflito) */
