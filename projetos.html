@@ -368,21 +368,35 @@ function goPrev(){ applySlide(slideIndex - 1); }
 function goNext(){ applySlide(slideIndex + 1); }
 
 
-function toggleNav(btn, visible){
+function setNavButton(btn, shouldShow){
   if (!btn) return;
-  btn.classList.toggle("is-hidden", !visible);
-  btn.disabled = !visible;
+  btn.classList.toggle("is-hidden", !shouldShow);
+  btn.disabled = !shouldShow;
 }
 
 function updateNavVisibility(){
-  const hasNav = slides.length > 1;
-  const hasPrev = hasNav && slideIndex > 0;
-  const hasNext = hasNav && slideIndex < slides.length - 1;
+  const total = slides.length;
 
-  toggleNav(prPrevDesktop, hasPrev);
-  toggleNav(prNextDesktop, hasNext);
-  toggleNav(prPrevMobile,  hasPrev);
-  toggleNav(prNextMobile,  hasNext);
+  // caso 1: 0 ou 1 slide -> sem navegação
+  if (total <= 1){
+    setNavButton(prPrevDesktop, false);
+    setNavButton(prNextDesktop, false);
+    setNavButton(prPrevMobile,  false);
+    setNavButton(prNextMobile,  false);
+    return;
+  }
+
+  // caso 2: 2+ slides
+  const isFirst = slideIndex === 0;
+  const isLast  = slideIndex === total - 1;
+
+  const showPrev = !isFirst; // aparece se NÃO for o primeiro
+  const showNext = !isLast;  // aparece se NÃO for o último
+
+  setNavButton(prPrevDesktop, showPrev);
+  setNavButton(prNextDesktop, showNext);
+  setNavButton(prPrevMobile,  showPrev);
+  setNavButton(prNextMobile,  showNext);
 }
 
 function openModal(project){
