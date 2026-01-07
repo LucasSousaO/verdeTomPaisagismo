@@ -50,16 +50,19 @@
 .project-card__media .img-before{
   opacity: 0;
   pointer-events: none;
+  cursor:pointer;
 }
 
 /* hover APENAS se houver antes */
 .project-card[data-has-before="true"]:hover .img-before{
   opacity: 1;
   transform: scale(1.02);
+  cursor:pointer;
 }
 
 .project-card[data-has-before="true"]:hover .img-after{
   opacity: 0;
+  cursor:pointer;
 }
 
 .project-card__body{
