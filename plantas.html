@@ -385,8 +385,8 @@ const prBefore = modal?.querySelector("#prBefore");
     // layout mobile: start/end quando só tem uma seta
     if (controls){
       controls.classList.remove("no-nav", "only-prev", "only-next");
-      if (showPrev && !showNext) controls.classList.add("only-prev");   // só esquerda -> end
-      else if (!showPrev && showNext) controls.classList.add("only-next"); // só direita -> start
+      if (showPrev && !showNext) controls.classList.add("only-next");   // só esquerda -> end
+      else if (!showPrev && showNext) controls.classList.add("only-prev"); // só direita -> start
     }
   }
 
