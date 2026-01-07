@@ -157,36 +157,18 @@
 <a href="/verdeTomPaisagismo/contato.html" class="floating-cta" aria-label="Enviar proposta">Entre em contato</a>
 
   <script src="assets/js/main.js"></script>
-  <script>
+ <script>
 (async function(){
   const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdP_h8M1SSBrqtxsH0j0V6eQ9MN66HX4JhSG0KgP_wyGVZmVAfzMX_J-MFPqc90c54N4vpkjakM0pj/pub?gid=3559854&single=true&output=csv";
 
-  let projects = [];
-  let scrollY = 0;
-
-
-function isImageLikeUrl(v){
-  // aceita .jpg .jpeg .png .webp .gif .avif .svg (mesmo com ?query)
-  return /\.(jpe?g|png|webp|gif|avif|svg)(\?.*)?$/i.test(String(v || "").trim());
-}
-
-/**
- * Aceita:
- * - URL absoluta: https://site.com/img.jpg (ou com ?v=1)
- * - caminho do repo: assets/images/x.webp | /assets/images/x.webp | ./assets/images/x.webp
- * Retorna URL resolvida e pronta para <img src="">
- */
- 
-  function lockBodyScroll(){
-    scrollY = window.scrollY || 0;
-    document.body.classList.add("modal-open");
-    document.body.style.top = `-${scrollY}px`;
+  // ===== helpers =====
+  function pick(obj, keys){
+    for (const k of keys){
+      if (obj && Object.prototype.hasOwnProperty.call(obj, k)) return obj[k];
+    }
+    return "";
   }
-  function unlockBodyScroll(){
-    document.body.classList.remove("modal-open");
-    document.body.style.top = "";
-    window.scrollTo(0, scrollY);
-  }
+  function norm(v){ return String(v || "").trim().toLowerCase(); }
 
   function slugify(s){
     return String(s || "")
@@ -196,10 +178,30 @@ function isImageLikeUrl(v){
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
   }
+
   function buildUrl(slug){
     const base = window.location.href.split("#")[0];
     return `${base}#${encodeURIComponent(slug)}`;
   }
+
+  // se você já tem resolveImageSrc no main.js, ele será usado
+  // fallback seguro caso não exista
+  function isAbsoluteUrl(v){
+    return /^https?:\/\//i.test(String(v || "").trim());
+  }
+  function getRepoBaseUrl(){
+    return "https://lucassousao.github.io/verdeTomPaisagismo/";
+  }
+  function resolveImageSrcLocal(input){
+    const raw = String(input || "").trim();
+    if (!raw) return "";
+    if (isAbsoluteUrl(raw)) return raw;
+    const cleaned = raw.replace(/^\.?\//, "");
+    return getRepoBaseUrl() + cleaned;
+  }
+  const resolveImg = (typeof window.resolveImageSrc === "function")
+    ? window.resolveImageSrc
+    : resolveImageSrcLocal;
 
   function parseCSV(text){
     const rows = [];
@@ -215,17 +217,25 @@ function isImageLikeUrl(v){
       if (c === '"'){ inQuotes = !inQuotes; continue; }
 
       if (c === ',' && !inQuotes){ row.push(cur); cur = ""; continue; }
+
       if ((c === '\n' || c === '\r') && !inQuotes){
-        if (cur.length || row.length){ row.push(cur); rows.push(row); }
+        if (cur.length || row.length){
+          row.push(cur);
+          rows.push(row);
+        }
         cur = ""; row = [];
         if (c === '\r' && n === '\n') i++;
         continue;
       }
+
       cur += c;
     }
-    if (cur.length || row.length){ row.push(cur); rows.push(row); }
+    if (cur.length || row.length){
+      row.push(cur);
+      rows.push(row);
+    }
 
-    const headers = rows.shift().map(h => h.replace(/^\uFEFF/, "").trim());
+    const headers = (rows.shift() || []).map(h => String(h).replace(/^\uFEFF/, "").trim());
     return rows
       .filter(r => r.some(v => String(v||"").trim().length))
       .map(r => {
@@ -235,359 +245,301 @@ function isImageLikeUrl(v){
       });
   }
 
-  // Modal refs
-const modal = document.getElementById("projectModal");
-const btnClose = modal?.querySelector(".modal-close");
-const prTitle = document.getElementById("prTitle");
-const prAfter  = modal?.querySelector("#prAfter");
-const prBefore = modal?.querySelector("#prBefore");
-const prRange  = modal?.querySelector("#prRange");
-const prHandle = modal?.querySelector("#prHandle");
-const compareBox = modal?.querySelector("#compareBox");
-const prCount = modal?.querySelector("#prCount");
-const prPedido = document.getElementById("prPedido");
-const prEscopo = document.getElementById("prEscopo");
-const prDuracao = document.getElementById("prDuracao");
-const prLocal = document.getElementById("prLocal");
+  // ===== DOM refs =====
+  const grid = document.getElementById("plantsGrid");
 
-const prPrevDesktop = document.getElementById("prPrevDesktop");
-const prNextDesktop = document.getElementById("prNextDesktop");
-const prPrevMobile  = document.getElementById("prPrevMobile");
-const prNextMobile  = document.getElementById("prNextMobile");
+  const modal = document.getElementById("projectModal");
+  const btnClose = modal?.querySelector(".modal-close");
 
-const shareWA = document.getElementById("shareProjectWhatsApp");
-const btnCopy = document.getElementById("copyProjectLink");
+  const prTitle  = modal?.querySelector("#prTitle");
+  const prAfter  = modal?.querySelector("#prAfter");
+  const prBefore = modal?.querySelector("#prBefore");
+  const prRange  = modal?.querySelector("#prRange");
+  const prHandle = modal?.querySelector("#prHandle");
+  const compareBox = modal?.querySelector("#compareBox");
+  const prCount  = modal?.querySelector("#prCount");
 
-function setCompare(value){
-  const v = Math.max(0, Math.min(100, Number(value)));
-  prBefore.style.clipPath = `inset(0 ${100 - v}% 0 0)`;
-  prHandle.style.left = `${v}%`;
-}
+  const prPrevDesktop = modal?.querySelector("#prPrevDesktop");
+  const prNextDesktop = modal?.querySelector("#prNextDesktop");
+  const prPrevMobile  = modal?.querySelector("#prPrevMobile");
+  const prNextMobile  = modal?.querySelector("#prNextMobile");
 
-function setCompareFromClientX(clientX){
-  if (!compareBox || !prRange) return;
-  const r = compareBox.getBoundingClientRect();
-  if (!r.width) return;
-  const x = Math.max(0, Math.min(r.width, clientX - r.left));
-  const v = (x / r.width) * 100;
-  prRange.value = v;
-  setCompare(v);
-}
+  const shareWA = modal?.querySelector("#shareProjectWhatsApp");
+  const btnCopy = modal?.querySelector("#copyProjectLink");
 
-let dragging = false;
-
-compareBox?.addEventListener("pointerdown", (e) => {
-  if (!modal?.classList.contains("open")) return;
-  e.preventDefault();
-  dragging = true;
-  compareBox.setPointerCapture?.(e.pointerId);
-  setCompareFromClientX(e.clientX);
-});
-
-compareBox?.addEventListener("pointermove", (e) => {
-  if (!dragging) return;
-  setCompareFromClientX(e.clientX);
-});
-
-function endDrag(){
-  dragging = false;
-}
-compareBox?.addEventListener("pointerup", endDrag);
-compareBox?.addEventListener("pointercancel", endDrag);
-compareBox?.addEventListener("lostpointercapture", endDrag);
-compareBox?.addEventListener("pointerleave", endDrag);
-
-let slides = [];
-let slideIndex = 0;
-
-function collectSlides(plant){
-  const slides = [];
-  for (let i = 1; i <= 5; i++){
-    const img = plant[`imagem${i}`];
-    if (!img) continue;
-
-    slides.push({
-      after: img,
-      mode: "single"
-    });
+  // ===== modal scroll lock (opcional) =====
+  let scrollY = 0;
+  function lockBodyScroll(){
+    scrollY = window.scrollY || 0;
+    document.body.classList.add("modal-open");
+    document.body.style.top = `-${scrollY}px`;
   }
-  return slides;
-}
-
-
-function applySlide(idx){
-  if (!slides.length) return;
-
-  slideIndex = Math.max(0, Math.min(slides.length - 1, idx));
-  const s = slides[slideIndex];
-
-  // after sempre existe
-  prAfter.src = resolveImageSrc(s.after);
-  prAfter.alt = prTitle.textContent ? `Depois - ${prTitle.textContent}` : "Depois";
-
-  if (s.mode === "compare"){
-    prBefore.src = resolveImageSrc(s.before);
-    prBefore.alt = prTitle.textContent ? `Antes - ${prTitle.textContent}` : "Antes";
-
-    prBefore.style.display = "block";
-    prRange.style.display = "block";
-    prHandle.style.display = "block";
-    compareBox.dataset.mode = "compare";
-
-    prRange.value = 50;
-    setCompare(50);
-  } else {
-    // single
-    prBefore.src = "";
-    prBefore.style.display = "none";
-    prRange.style.display = "none";
-    prHandle.style.display = "none";
-    compareBox.dataset.mode = "single";
-    prAfter.style.clipPath = "none";
+  function unlockBodyScroll(){
+    document.body.classList.remove("modal-open");
+    document.body.style.top = "";
+    window.scrollTo(0, scrollY);
   }
 
-  // contador
-  if (prCount) prCount.textContent = `${slideIndex + 1}/${slides.length}`;
+  // ===== slider single =====
+  function setCompare(value){
+    if (!prBefore || !prHandle) return;
+    const v = Math.max(0, Math.min(100, Number(value)));
+    prBefore.style.clipPath = `inset(0 ${100 - v}% 0 0)`;
+    prHandle.style.left = `${v}%`;
+  }
 
-  // ✅ atualiza setas (regra 1/3, 2/3, 3/3)
-  updateNavVisibility();
-}
+  function setCompareFromClientX(clientX){
+    if (!compareBox || !prRange) return;
+    const r = compareBox.getBoundingClientRect();
+    if (!r.width) return;
+    const x = Math.max(0, Math.min(r.width, clientX - r.left));
+    const v = (x / r.width) * 100;
+    prRange.value = v;
+    setCompare(v);
+  }
 
+  let dragging = false;
+  compareBox?.addEventListener("pointerdown", (e) => {
+    if (!modal?.classList.contains("open")) return;
+    e.preventDefault();
+    dragging = true;
+    compareBox.setPointerCapture?.(e.pointerId);
+    setCompareFromClientX(e.clientX);
+  });
+  compareBox?.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    setCompareFromClientX(e.clientX);
+  });
+  function endDrag(){ dragging = false; }
+  compareBox?.addEventListener("pointerup", endDrag);
+  compareBox?.addEventListener("pointercancel", endDrag);
+  compareBox?.addEventListener("lostpointercapture", endDrag);
+  compareBox?.addEventListener("pointerleave", endDrag);
 
-function goPrev(){ applySlide(slideIndex - 1); }
-function goNext(){ applySlide(slideIndex + 1); }
+  prRange?.addEventListener("input", (e) => setCompare(e.target.value));
 
-function toggleNav(btn, visible){
-  if (!btn) return;
-  btn.classList.toggle("is-hidden", !visible);
-  btn.disabled = !visible;
-}
+  // ===== slides =====
+  let plants = [];
+  let slides = [];
+  let slideIndex = 0;
 
-function setNavButton(btn, shouldShow){
-  if (!btn) return;
-  btn.classList.toggle("is-hidden", !shouldShow);
-  btn.disabled = !shouldShow;
-}
+  function getPlantImage(plant, i){
+    // suporta "imagem 1" (com espaço) e variações
+    return pick(plant, [
+      `imagem ${i}`,
+      `imagem${i}`,
+      `Imagem ${i}`,
+      `Imagem${i}`
+    ]).trim();
+  }
 
-function updateNavVisibility(){
-  const total = slides.length;
-
-  // caso 1: 0 ou 1 slide -> sem navegação
-  if (total <= 1){
-    setNavButton(prPrevDesktop, false);
-    setNavButton(prNextDesktop, false);
-    setNavButton(prPrevMobile,  false);
-    setNavButton(prNextMobile,  false);
-      
-    // ✅ layout mobile
-    const controls = document.querySelector(".compare-controls");
-    if (controls){
-      controls.classList.remove("only-prev", "only-next");
-      controls.classList.add("no-nav");
+  function collectSlides(plant){
+    const out = [];
+    for (let i = 1; i <= 5; i++){
+      const img = getPlantImage(plant, i);
+      if (!img) continue;
+      out.push({ after: img, mode: "single" });
     }
-    return;
+    return out;
   }
 
-
-  // caso 2: 2+ slides
-  const isFirst = slideIndex === 0;
-  const isLast  = slideIndex === total - 1;
-
-  const showPrev = !isFirst; // aparece se NÃO for o primeiro
-  const showNext = !isLast;  // aparece se NÃO for o último
-
-  setNavButton(prPrevDesktop, showPrev);
-  setNavButton(prNextDesktop, showNext);
-  setNavButton(prPrevMobile,  showPrev);
-  setNavButton(prNextMobile,  showNext);
-    // ✅ layout mobile (start/end conforme a seta)
-  const controls = document.querySelector(".compare-controls");
-  if (controls){
-    controls.classList.remove("no-nav", "only-prev", "only-next");
-
-    if (showPrev && !showNext) controls.classList.add("only-next"); // só esquerda -> end
-    else if (!showPrev && showNext) controls.classList.add("only-prev"); // só direita -> start
-    // se tiver as duas, fica no default (space-between)
-  }
-}
-
-function openModal(project){
-  if (!modal) return;
-
-  const slug = String(project.slug || "").trim() || slugify(project.titulo || "");
-  history.pushState(null, "", `#${encodeURIComponent(slug)}`);
-
-plTitle.textContent      = plant.nome || plant.titulo || "";
-plCientifico.textContent = plant.nome_cientifico || "";
-plPorque.textContent     = plant.porque || "";
-plCuidados.textContent   = plant.cuidados || "";
-
-  slides = collectSlides(project);
-  slideIndex = 0;
-
-  if (!slides.length){
-    console.warn("Projeto publicado sem imagemDepoisUrl1..5:", project);
-    return;
+  function setNavButton(btn, shouldShow){
+    if (!btn) return;
+    btn.classList.toggle("is-hidden", !shouldShow);
+    btn.disabled = !shouldShow;
   }
 
-  applySlide(0); // ✅ já chama updateNavVisibility()
+  function updateNavVisibility(){
+    const total = slides.length;
 
-  // SHARE
-  const url = buildUrl(slug);
-  const shareText = `Veja este projeto do Verde Tom: ${project.titulo || ""}\n${url}`;
+    const controls = modal?.querySelector(".compare-controls");
+    if (total <= 1){
+      setNavButton(prPrevDesktop, false);
+      setNavButton(prNextDesktop, false);
+      setNavButton(prPrevMobile,  false);
+      setNavButton(prNextMobile,  false);
 
-  if (shareWA){
-    shareWA.href = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
-  }
-
-  if (btnCopy){
-    btnCopy.onclick = async () => {
-      const old = btnCopy.textContent;
-      try{
-        await navigator.clipboard.writeText(url);
-        btnCopy.textContent = "Link copiado!";
-        setTimeout(() => btnCopy.textContent = old || "Copiar link", 1400);
-      } catch {
-        prompt("Copie o link:", url);
+      if (controls){
+        controls.classList.remove("only-prev", "only-next");
+        controls.classList.add("no-nav");
       }
-    };
+      return;
+    }
+
+    const isFirst = slideIndex === 0;
+    const isLast  = slideIndex === total - 1;
+
+    const showPrev = !isFirst; // se NÃO é primeiro
+    const showNext = !isLast;  // se NÃO é último
+
+    setNavButton(prPrevDesktop, showPrev);
+    setNavButton(prNextDesktop, showNext);
+    setNavButton(prPrevMobile,  showPrev);
+    setNavButton(prNextMobile,  showNext);
+
+    // layout mobile: start/end quando só tem uma seta
+    if (controls){
+      controls.classList.remove("no-nav", "only-prev", "only-next");
+      if (showPrev && !showNext) controls.classList.add("only-prev");   // só esquerda -> end
+      else if (!showPrev && showNext) controls.classList.add("only-next"); // só direita -> start
+    }
   }
 
-  modal.classList.add("open");
-  modal.setAttribute("aria-hidden", "false");
-  lockBodyScroll();
-}
+  function applySlide(idx){
+    if (!slides.length) return;
 
-prPrevDesktop?.addEventListener("click", (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-  goPrev();
-});
+    slideIndex = Math.max(0, Math.min(slides.length - 1, idx));
+    const s = slides[slideIndex];
 
-prPrevMobile?.addEventListener("click", (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-  goPrev();
-});
-prNextDesktop?.addEventListener("click", (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-  goNext();
-});
+    if (prAfter){
+      prAfter.src = resolveImg(s.after);
+      prAfter.alt = prTitle?.textContent ? `Imagem - ${prTitle.textContent}` : "Imagem";
+      prAfter.style.clipPath = "none";
+    }
 
-prNextMobile?.addEventListener("click", (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-  goNext();
-});
+    // modo single (sem antes/depois)
+    if (prBefore){
+      prBefore.src = "";
+      prBefore.style.display = "none";
+    }
+    if (prRange)  prRange.style.display  = "none";
+    if (prHandle) prHandle.style.display = "none";
+    if (compareBox) compareBox.dataset.mode = "single";
 
-// teclado (quando modal aberto)
-document.addEventListener("keydown", (e) => {
-  if (!modal?.classList.contains("open")) return;
-  if (e.key === "ArrowLeft") goPrev();
-  if (e.key === "ArrowRight") goNext();
-});
+    if (prCount) prCount.textContent = `${slideIndex + 1}/${slides.length}`;
 
+    updateNavVisibility();
+  }
+
+  function goPrev(){ applySlide(slideIndex - 1); }
+  function goNext(){ applySlide(slideIndex + 1); }
+
+  prPrevDesktop?.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); goPrev(); });
+  prNextDesktop?.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); goNext(); });
+  prPrevMobile?.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); goPrev(); });
+  prNextMobile?.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); goNext(); });
+
+  document.addEventListener("keydown", (e) => {
+    if (!modal?.classList.contains("open")) return;
+    if (e.key === "ArrowLeft")  goPrev();
+    if (e.key === "ArrowRight") goNext();
+    if (e.key === "Escape") closeModal();
+  });
+
+  function openModal(plant){
+    if (!modal) return;
+
+    const titulo = pick(plant, ["titulo", "Título", "nome", "Nome"]).trim();
+    const slug = pick(plant, ["slug", "Slug"]).trim() || slugify(titulo);
+
+    history.pushState(null, "", `#${encodeURIComponent(slug)}`);
+
+    if (prTitle) prTitle.textContent = titulo || "Planta";
+
+    slides = collectSlides(plant);
+    slideIndex = 0;
+
+    if (!slides.length){
+      console.warn("Planta publicada sem imagens 1..5:", plant);
+      return;
+    }
+
+    applySlide(0);
+
+    // share
+    const url = buildUrl(slug);
+    const shareText = `Veja esta planta do Verde Tom: ${titulo}\n${url}`;
+
+    if (shareWA){
+      shareWA.href = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+    }
+
+    if (btnCopy){
+      btnCopy.onclick = async () => {
+        const old = btnCopy.textContent;
+        try{
+          await navigator.clipboard.writeText(url);
+          btnCopy.textContent = "Link copiado!";
+          setTimeout(() => btnCopy.textContent = old || "Copiar link", 1400);
+        } catch {
+          prompt("Copie o link:", url);
+        }
+      };
+    }
+
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
+    lockBodyScroll();
+  }
 
   function closeModal(){
-    if(!modal) return;
+    if (!modal) return;
     modal.classList.remove("open");
     modal.setAttribute("aria-hidden", "true");
-
     if (btnCopy) btnCopy.onclick = null;
-
     unlockBodyScroll();
     history.pushState(null, "", window.location.href.split("#")[0]);
   }
 
   btnClose?.addEventListener("click", closeModal);
   modal?.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
 
-  // impede scroll “vazar” quando estiver no fundo cinza (desktop)
-  modal?.addEventListener("wheel", (e) => {
-  if (e.target === modal) e.preventDefault();
-}, { passive:false });
-
-modal?.addEventListener("touchmove", (e) => {
-  if (e.target === modal) e.preventDefault();
-}, { passive:false });
-  prRange?.addEventListener("input", (e) => setCompare(e.target.value));
-
-  function openBySlug(slug){
-    const s = decodeURIComponent(String(slug || "")).trim();
-    if(!s) return;
-    const idx = projects.findIndex(p => (p.slug || slugify(p.titulo || "")) === s);
-    if(idx >= 0) openModal(projects[idx]);
-  }
-
+  // ===== fetch + render =====
   try{
-    const res = await fetch(CSV_URL, { cache:"no-store" });
+    const res = await fetch(CSV_URL, { cache: "no-store" });
     if(!res.ok) throw new Error("Falha ao buscar CSV: " + res.status);
     const csv = await res.text();
 
-    plants = parseCSV(csv)
-      .filter(p => (p.status || "").toLowerCase() === "publicado");
+    let raw = parseCSV(csv);
 
-    const grid = document.getElementById("plantsGrid");
-    if(!grid) return;
+    // Debug rápido (remova depois)
+    console.log("headers detectados:", raw[0] ? Object.keys(raw[0]) : "(sem linhas)");
+    console.log("1a linha exemplo:", raw[0]);
 
-    grid.innerHTML = projects.map((p, idx) => {
-  const slug = (p.slug || slugify(p.titulo || ""));
-  const url = buildUrl(slug);
+    plants = raw.filter(p => norm(pick(p, ["status", "Status", "STATUS"])) === "publicado");
 
-  const cats = (p.categorias || "")
-    .split(",")
-    .map(c => c.trim())
-    .filter(Boolean);
+    if (!grid) return;
 
-  const after1 = String(p.imagemDepoisUrl1 || "").trim();
-  const before1 = String(p.imagemAntesUrl1 || "").trim();
-  const hasBefore = !!before1;
+    grid.innerHTML = plants.map((p, idx) => {
+      const titulo = pick(p, ["titulo", "Título", "nome", "Nome"]).trim();
+      const slug = pick(p, ["slug", "Slug"]).trim() || slugify(titulo);
+      const url = buildUrl(slug);
 
-  return `
-    <article
-      class="card project-card"
-      data-idx="${idx}"
-      data-slug="${slug}"
-      data-has-before="${hasBefore ? "true" : "false"}"
-      role="button"
-      tabindex="0"
-    >
-      <div class="project-card__media">
-        <img class="img-after" src="${resolveImageSrc(after1)}"
-          alt="${p.titulo ? `Depois - ${p.titulo}` : "Depois"}" loading="lazy">
+      const cats = pick(p, ["categorias", "Categorias"]).split(",").map(s => s.trim()).filter(Boolean);
 
-        ${hasBefore ? `
-          <img class="img-before" src="${resolveImageSrc(before1)}"
-            alt="${p.titulo ? `Antes - ${p.titulo}` : "Antes"}" loading="lazy">
-        ` : ``}
-      </div>
+      const img1 = getPlantImage(p, 1);
 
-      <div class="project-card__body">
-        <h3>${p.titulo || ""}</h3>
-
-        <div class="project-card__meta">
-          <span class="project-card__tag">⏱ ${p.duracao || "-"}</span>
-
-          <div class="project-card__categories">
-            ${cats.map(c => `<span class="badge">${c}</span>`).join("")}
+      return `
+        <article class="card project-card"
+          data-idx="${idx}"
+          data-slug="${slug}"
+          role="button"
+          tabindex="0"
+        >
+          <div class="project-card__media">
+            ${img1 ? `<img class="img-after" src="${resolveImg(img1)}" alt="${titulo}" loading="lazy">` : ``}
           </div>
 
-          <span class="project-card__tag">📍 ${p.local || "-"}</span>
+          <div class="project-card__body">
+            <h3>${titulo || ""}</h3>
 
-          <a class="small" href="${url}" onclick="event.preventDefault()">ver detalhes</a>
-        </div>
-      </div>
-    </article>
-  `;
-}).join("") || `<p class="small">Nenhum catálogo publicado ainda.</p>`;
+            <div class="project-card__meta">
+              <div class="project-card__categories">
+                ${cats.map(c => `<span class="badge">${c}</span>`).join("")}
+              </div>
 
+              <a class="small" href="${url}" onclick="event.preventDefault()">ver detalhes</a>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join("") || `<p class="small">Nenhum catálogo publicado ainda.</p>`;
 
     grid.addEventListener("click", (e) => {
       const card = e.target.closest(".project-card");
       if(!card) return;
-      openModal(projects[Number(card.dataset.idx)]);
+      const i = Number(card.dataset.idx);
+      openModal(plants[i]);
     });
 
     grid.addEventListener("keydown", (e) => {
@@ -595,10 +547,18 @@ modal?.addEventListener("touchmove", (e) => {
       const card = e.target.closest(".project-card");
       if(!card) return;
       e.preventDefault();
-      openModal(projects[Number(card.dataset.idx)]);
+      const i = Number(card.dataset.idx);
+      openModal(plants[i]);
     });
 
     // abre por hash
+    function openBySlug(slug){
+      const s = decodeURIComponent(String(slug || "")).trim();
+      if(!s) return;
+      const idx = plants.findIndex(p => (pick(p, ["slug","Slug"]).trim() || slugify(pick(p, ["titulo","Título","nome","Nome"]))) === s);
+      if(idx >= 0) openModal(plants[idx]);
+    }
+
     const hash = (window.location.hash || "").replace("#","").trim();
     if(hash) openBySlug(hash);
 
@@ -612,6 +572,5 @@ modal?.addEventListener("touchmove", (e) => {
   }
 })();
 </script>
-
 </body>
 </html>
