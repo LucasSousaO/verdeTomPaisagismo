@@ -367,6 +367,11 @@ function applySlide(idx){
 function goPrev(){ applySlide(slideIndex - 1); }
 function goNext(){ applySlide(slideIndex + 1); }
 
+function toggleNav(btn, visible){
+  if (!btn) return;
+  btn.classList.toggle("is-hidden", !visible);
+  btn.disabled = !visible;
+}
 
 function setNavButton(btn, shouldShow){
   if (!btn) return;
