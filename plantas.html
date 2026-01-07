@@ -49,7 +49,7 @@
     <section class="section">
   <div class="container">
     <h1>plantas</h1>
-    <div id="plantsGrid" class="projects-grid"></div>
+    <div id="plantsGrid" class="plants-grid"></div>
   </div>
 </section>
 
@@ -58,8 +58,8 @@
   <button class="modal-close" type="button" aria-label="Fechar">✕</button>
 
   <div class="modal-inner modal-inner--project">
-    <div class="project-modal">
-      <h2 id="prTitle" class="project-modal__title"></h2>
+    <div class="plants-modal">
+      <h2 id="prTitle" class="plants-modal__title"></h2>
 
  <div class="compare-wrapper">
   <!-- SETAS DESKTOP -->
@@ -89,7 +89,7 @@
 
 
       <!-- Texto fixo abaixo (da planilha) -->
-      <div class="project-modal__info">
+      <div class="plants-modal__info">
         <div class="info-row">
         <div class="info-label">Por que usar</div>
         <div id="plPorque" class="info-value"></div>
@@ -104,10 +104,10 @@
         <div class="info-pill">
             <b>Nome científico:</b> <span id="plCientifico"></span>
         </div>
-          <div class="project-share">
-        <a id="shareProjectWhatsApp" class="project-share__btn" target="_blank" rel="noopener">
+          <div class="plants-share">
+        <a id="shareProjectWhatsApp" class="plants-share__btn" target="_blank" rel="noopener">
         Compartilhar no WhatsApp</a>
-        <button id="copyProjectLink" class="project-share__btn project-share__btn--secondary" type="button">
+        <button id="copyProjectLink" class="plants-share__btn plants-share__btn--secondary" type="button">
         Copiar link</button>
 </div>
         </div>
@@ -510,21 +510,21 @@
       const img1 = getPlantImage(p, 1);
 
       return `
-        <article class="card project-card"
+        <article class="card plants-card"
           data-idx="${idx}"
           data-slug="${slug}"
           role="button"
           tabindex="0"
         >
-          <div class="project-card__media">
+          <div class="plants-card__media">
             ${img1 ? `<img class="img-after" src="${resolveImg(img1)}" alt="${titulo}" loading="lazy">` : ``}
           </div>
 
-          <div class="project-card__body">
+          <div class="plants-card__body">
             <h3>${titulo || ""}</h3>
 
-            <div class="project-card__meta">
-              <div class="project-card__categories">
+            <div class="plants-card__meta">
+              <div class="plants-card__categories">
                 ${cats.map(c => `<span class="badge">${c}</span>`).join("")}
               </div>
 
@@ -536,7 +536,7 @@
     }).join("") || `<p class="small">Nenhum catálogo publicado ainda.</p>`;
 
     grid.addEventListener("click", (e) => {
-      const card = e.target.closest(".project-card");
+      const card = e.target.closest(".plants-card");
       if(!card) return;
       const i = Number(card.dataset.idx);
       openModal(plants[i]);
@@ -544,7 +544,7 @@
 
     grid.addEventListener("keydown", (e) => {
       if (e.key !== "Enter" && e.key !== " ") return;
-      const card = e.target.closest(".project-card");
+      const card = e.target.closest(".plants-card");
       if(!card) return;
       e.preventDefault();
       const i = Number(card.dataset.idx);
