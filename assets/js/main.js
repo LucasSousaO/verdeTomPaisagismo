@@ -14,6 +14,23 @@
   const modal = $("#imgModal");
   const modalImg = $("#imgModalImg");
   const modalClose = $("#imgModalClose");
+function isAbsoluteUrl(v){
+  return /^https?:\/\//i.test(String(v || "").trim());
+}
+
+function getRepoBaseUrl(){
+  return "https://lucassousao.github.io/verdeTomPaisagismo/";
+}
+
+function resolveImageSrc(input){
+  const raw = String(input || "").trim();
+  if (!raw) return "";
+
+  if (isAbsoluteUrl(raw)) return raw;
+
+  const cleaned = raw.replace(/^\.?\//, "");
+  return getRepoBaseUrl() + cleaned;
+}
 
   function openModal(src, alt){
     if(!modal || !modalImg) return;

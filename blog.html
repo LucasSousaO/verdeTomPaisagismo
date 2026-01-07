@@ -192,21 +192,6 @@
     return clean.slice(0, limit).trimEnd() + "…";
   }
 
-  function resolveImageSrc(input){
-  const raw = String(input || "").trim();
-  if (!raw) return "";
-
-  // URL absoluta
-  if (isAbsoluteUrl(raw)) {
-    // se for um link absoluto que termina com .jpg/.png/... -> usa direto
-    // mesmo que não termine, ainda pode ser imagem (CDN), então também aceita
-    return raw;
-  }
-
-  // Caminho relativo do repo
-  const cleaned = raw.replace(/^\.?\//, ""); // remove "./" ou "/" no início
-  return getRepoBaseUrl() + cleaned;
-}
   // Modal elements
   const modal = document.getElementById("postModal");
   const btnClose = modal?.querySelector(".modal-close");

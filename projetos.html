@@ -161,20 +161,13 @@
   let projects = [];
   let scrollY = 0;
 
-  function isAbsoluteUrl(v){
-  return /^https?:\/\//i.test(String(v || "").trim());
-}
 
 function isImageLikeUrl(v){
   // aceita .jpg .jpeg .png .webp .gif .avif .svg (mesmo com ?query)
   return /\.(jpe?g|png|webp|gif|avif|svg)(\?.*)?$/i.test(String(v || "").trim());
 }
 
-function getRepoBaseUrl(){
-  // Preferível: define seu repo base explicitamente (mais robusto)
-  // Ajuste aqui se mudar o repo:
-  return "https://lucassousao.github.io/verdeTomPaisagismo/";
-}
+
 
 /**
  * Aceita:
@@ -182,21 +175,7 @@ function getRepoBaseUrl(){
  * - caminho do repo: assets/images/x.webp | /assets/images/x.webp | ./assets/images/x.webp
  * Retorna URL resolvida e pronta para <img src="">
  */
-  function resolveImageSrc(input){
-  const raw = String(input || "").trim();
-  if (!raw) return "";
-
-  // URL absoluta
-  if (isAbsoluteUrl(raw)) {
-    // se for um link absoluto que termina com .jpg/.png/... -> usa direto
-    // mesmo que não termine, ainda pode ser imagem (CDN), então também aceita
-    return raw;
-  }
-
-  // Caminho relativo do repo
-  const cleaned = raw.replace(/^\.?\//, ""); // remove "./" ou "/" no início
-  return getRepoBaseUrl() + cleaned;
-}
+ 
   function lockBodyScroll(){
     scrollY = window.scrollY || 0;
     document.body.classList.add("modal-open");
