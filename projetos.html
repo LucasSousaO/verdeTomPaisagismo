@@ -182,7 +182,7 @@ function getRepoBaseUrl(){
  * - caminho do repo: assets/images/x.webp | /assets/images/x.webp | ./assets/images/x.webp
  * Retorna URL resolvida e pronta para <img src="">
  */
-function resolveImageSrc(input){
+  function resolveImageSrc(input){
   const raw = String(input || "").trim();
   if (!raw) return "";
 
@@ -197,7 +197,6 @@ function resolveImageSrc(input){
   const cleaned = raw.replace(/^\.?\//, ""); // remove "./" ou "/" no início
   return getRepoBaseUrl() + cleaned;
 }
-  
   function lockBodyScroll(){
     scrollY = window.scrollY || 0;
     document.body.classList.add("modal-open");
