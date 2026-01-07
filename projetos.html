@@ -64,42 +64,18 @@
       <h2 id="prTitle" class="project-modal__title"></h2>
 
  <div class="compare-wrapper">
-
   <!-- SETAS DESKTOP -->
-  <button class="compare-nav compare-nav--prev compare-des"
-          id="prPrevDesktop"
-          type="button"
-          aria-label="Imagem anterior">‹</button>
+  <button class="compare-nav compare-nav--prev compare-des" id="prPrevDesktop" type="button" aria-label="Imagem anterior">‹</button>
 
-  <div class="compare" id="compareBox">
-    <img id="prAfter" class="compare__img" alt="">
-    <img id="prBefore" class="compare__img compare__before" alt="">
-    <input id="prRange" class="compare__range" type="range">
-    <div class="compare__handle" id="prHandle"></div>
-    <div class="compare-count" id="prCount"></div>
-    <div class="compare__labels">
-      <span>ANTES</span>
-      <span>DEPOIS</span>
-    </div>
-  </div>
+  <div class="compare" id="compareBox"> ... </div>
 
-  <button class="compare-nav compare-nav--next compare-des"
-          id="prNextDesktop"
-          type="button"
-          aria-label="Próxima imagem">›</button>
+  <button class="compare-nav compare-nav--next compare-des" id="prNextDesktop" type="button" aria-label="Próxima imagem">›</button>
 </div>
 
 <!-- CONTROLES MOBILE -->
 <div class="compare-controls">
-  <button class="compare-nav compare-nav--prev compare-mob"
-          id="prPrevMobile"
-          type="button"
-          aria-label="Imagem anterior">‹</button>
-
-  <button class="compare-nav compare-nav--next compare-mob"
-          id="prNextMobile"
-          type="button"
-          aria-label="Próxima imagem">›</button>
+  <button class="compare-nav compare-nav--prev compare-mob" id="prPrevMobile" type="button" aria-label="Imagem anterior">‹</button>
+  <button class="compare-nav compare-nav--next compare-mob" id="prNextMobile" type="button" aria-label="Próxima imagem">›</button>
 </div>
 
 
@@ -350,7 +326,7 @@ function applySlide(idx){
   slideIndex = Math.max(0, Math.min(slides.length - 1, idx));
   const s = slides[slideIndex];
 
-  // sempre tem after
+  // after sempre existe
   prAfter.src = resolveImageSrc(s.after);
   prAfter.alt = prTitle.textContent ? `Depois - ${prTitle.textContent}` : "Depois";
 
@@ -366,65 +342,56 @@ function applySlide(idx){
     prRange.value = 50;
     setCompare(50);
   } else {
-    // single (sem antes/depois)
+    // single
     prBefore.src = "";
     prBefore.style.display = "none";
     prRange.style.display = "none";
     prHandle.style.display = "none";
     compareBox.dataset.mode = "single";
-
-    // remove cortes residuais
     prAfter.style.clipPath = "none";
   }
-
-  // contador e controle de setas
-  if (prCount) prCount.textContent = `${slideIndex + 1}/${slides.length}`;
-
-  const hasNav = slides.length > 1;
 
   // contador
   if (prCount) prCount.textContent = `${slideIndex + 1}/${slides.length}`;
 
-  // visibilidade das setas (somente quando há navegação)
-  const showPrev = hasNav && slideIndex > 0;
-  const showNext = hasNav && slideIndex < (slides.length - 1);
+  // ✅ atualiza setas (regra 1/3, 2/3, 3/3)
+  updateNavVisibility();
+}
 
 
 function goPrev(){ applySlide(slideIndex - 1); }
 function goNext(){ applySlide(slideIndex + 1); }
 
-function updateNavVisibility() {
-  const hasPrev = slideIndex > 0;
-  const hasNext = slideIndex < slides.length - 1;
-
-  toggleNav(prPrevDesktop, hasPrev);
-  toggleNav(prNextDesktop, hasNext);
-  toggleNav(prPrevMobile, hasPrev);
-  toggleNav(prNextMobile, hasNext);
-}
 
 function toggleNav(btn, visible){
   if (!btn) return;
-
   btn.classList.toggle("is-hidden", !visible);
   btn.disabled = !visible;
+}
+
+function updateNavVisibility(){
+  const hasNav = slides.length > 1;
+  const hasPrev = hasNav && slideIndex > 0;
+  const hasNext = hasNav && slideIndex < slides.length - 1;
+
+  toggleNav(prPrevDesktop, hasPrev);
+  toggleNav(prNextDesktop, hasNext);
+  toggleNav(prPrevMobile,  hasPrev);
+  toggleNav(prNextMobile,  hasNext);
 }
 
 function openModal(project){
   if (!modal) return;
 
-  // slug (prioriza o da planilha)
   const slug = String(project.slug || "").trim() || slugify(project.titulo || "");
   history.pushState(null, "", `#${encodeURIComponent(slug)}`);
 
-  // texto
   prTitle.textContent = project.titulo || "";
   prPedido.textContent = project.pedido || "";
   prEscopo.textContent = project.escopo || "";
   prDuracao.textContent = project.duracao || "-";
   prLocal.textContent = project.local || "-";
 
-  // monta slides 1..5 (usa imagemDepoisUrlX / imagemAntesUrlX)
   slides = collectSlides(project);
   slideIndex = 0;
 
@@ -433,10 +400,9 @@ function openModal(project){
     return;
   }
 
-  // aplica o primeiro slide (respeita compare vs single)
-  applySlide(0);
+  applySlide(0); // ✅ já chama updateNavVisibility()
 
-  // SHARE (WhatsApp + copiar link)
+  // SHARE
   const url = buildUrl(slug);
   const shareText = `Veja este projeto do Verde Tom: ${project.titulo || ""}\n${url}`;
 
@@ -457,7 +423,6 @@ function openModal(project){
     };
   }
 
-  // abre modal
   modal.classList.add("open");
   modal.setAttribute("aria-hidden", "false");
   lockBodyScroll();
