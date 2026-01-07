@@ -243,6 +243,9 @@
 .compare-nav--prev{ left:10px; }
 .compare-nav--next{ right:10px; }
 
+.compare-des{display: flex;}
+compare-mob{display: contents;}
+
 .compare-count{
   position:absolute;
   right:12px;
@@ -384,6 +387,8 @@
     justify-content: space-between;
 
   }
+  .compare-des{display: none;}
+compare-mob{display: flex;}
 }
 
 /* 3) No mobile, botões um embaixo do outro (fica melhor e evita conflito) */
