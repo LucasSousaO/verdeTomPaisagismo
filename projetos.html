@@ -376,10 +376,22 @@ function applySlide(idx){
   if (prCount) prCount.textContent = `${slideIndex + 1}/${slides.length}`;
 
   const hasNav = slides.length > 1;
-  compareBox.dataset.nav = hasNav ? "on" : "off";
 
-  if (prPrev) prPrev.disabled = !hasNav || slideIndex === 0;
-  if (prNext) prNext.disabled = !hasNav || slideIndex === slides.length - 1;
+  // contador
+  if (prCount) prCount.textContent = `${slideIndex + 1}/${slides.length}`;
+
+  // visibilidade das setas (somente quando há navegação)
+  const showPrev = hasNav && slideIndex > 0;
+  const showNext = hasNav && slideIndex < (slides.length - 1);
+
+  if (prPrev){
+    prPrev.style.display = showPrev ? "flex" : "none";
+    prPrev.disabled = !showPrev;
+  }
+  if (prNext){
+    prNext.style.display = showNext ? "flex" : "none";
+    prNext.disabled = !showNext;
+  }
 }
 
 function goPrev(){ applySlide(slideIndex - 1); }
