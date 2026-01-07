@@ -233,10 +233,12 @@ function isImageLikeUrl(v){
 const modal = document.getElementById("projectModal");
 const btnClose = modal?.querySelector(".modal-close");
 const prTitle = document.getElementById("prTitle");
-const prAfter = document.getElementById("prAfter");
-const prBefore = document.getElementById("prBefore");
-const prRange = document.getElementById("prRange");
-const prHandle = document.getElementById("prHandle");
+const prAfter  = modal?.querySelector("#prAfter");
+const prBefore = modal?.querySelector("#prBefore");
+const prRange  = modal?.querySelector("#prRange");
+const prHandle = modal?.querySelector("#prHandle");
+const compareBox = modal?.querySelector("#compareBox");
+const prCount = modal?.querySelector("#prCount");
 const prPedido = document.getElementById("prPedido");
 const prEscopo = document.getElementById("prEscopo");
 const prDuracao = document.getElementById("prDuracao");
