@@ -18,6 +18,7 @@
 
   <link rel="icon" href="assets/images/vt.webp" />
   <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="stylesheet" href="assets/css/projects.css" />
 </head>
 
 <body>
@@ -514,34 +515,56 @@ modal?.addEventListener("touchmove", (e) => {
     if(!grid) return;
 
     grid.innerHTML = projects.map((p, idx) => {
-      const slug = (p.slug || slugify(p.titulo || ""));
-      const url = buildUrl(slug);
+  const slug = (p.slug || slugify(p.titulo || ""));
+  const url = buildUrl(slug);
 
-      const cats = (p.categorias || "")
-  .split(",")
-  .map(c => c.trim())
-  .filter(Boolean);
-  
-      return `
-        <article class="card project-card" data-idx="${idx}" data-slug="${slug}" role="button" tabindex="0">
-          <div class="project-card__media">
-            <img class="img-after" src="${resolveImageSrc(p.imagemDepoisUrl1)}" alt="${p.titulo ? `Depois - ${p.titulo}` : "Depois"}" loading="lazy">
-            <img class="img-before" src="${resolveImageSrc(p.imagemAntesUrl1)}" alt="${p.titulo ? `Antes - ${p.titulo}` : "Antes"}" loading="lazy">
+  const cats = (p.categorias || "")
+    .split(",")
+    .map(c => c.trim())
+    .filter(Boolean);
+
+  const after1 = String(p.imagemDepoisUrl1 || "").trim();
+  const before1 = String(p.imagemAntesUrl1 || "").trim();
+  const hasBefore = !!before1;
+
+  return `
+    <article
+      class="card project-card"
+      data-idx="${idx}"
+      data-slug="${slug}"
+      data-has-before="${hasBefore ? "true" : "false"}"
+      role="button"
+      tabindex="0"
+    >
+      <div class="project-card__media">
+        <img class="img-after" src="${resolveImageSrc(after1)}"
+          alt="${p.titulo ? `Depois - ${p.titulo}` : "Depois"}" loading="lazy">
+
+        ${hasBefore ? `
+          <img class="img-before" src="${resolveImageSrc(before1)}"
+            alt="${p.titulo ? `Antes - ${p.titulo}` : "Antes"}" loading="lazy">
+        ` : ``}
+      </div>
+
+      <div class="project-card__body">
+        <h3>${p.titulo || ""}</h3>
+
+        <div class="project-card__meta">
+          <span class="project-card__tag">⏱ ${p.duracao || "-"}</span>
+
+          <div class="project-card__categories">
+            ${cats.map(c => `<span class="badge">${c}</span>`).join("")}
           </div>
-          <div class="project-card__body">
-            <h3>${p.titulo || ""}</h3>
-            <div class="project-card__meta">
-              <span class="project-card__tag">⏱ ${p.duracao || "-"}</span>
-              <div class="project-card__categories">
-              ${cats.map(c => `<span class="badge">${c}</span>`).join("")}
-              </div>
-              <span class="project-card__tag">📍 ${p.local || "-"}</span>                            
-              <a class="small" href="${url}" onclick="event.preventDefault()">ver detalhes</a>
-              </div>
-          </div>
-        </article>
-      `;
-    }).join("") || `<p class="small">Nenhum projeto publicado ainda.</p>`;
+
+          <span class="project-card__tag">📍 ${p.local || "-"}</span>
+
+          <a class="small" href="${url}" onclick="event.preventDefault()">ver detalhes</a>
+        </div>
+      </div>
+    </article>
+  `;
+}).join("") || `<p class="small">Nenhum projeto publicado ainda.</p>`;
+
 
     grid.addEventListener("click", (e) => {
       const card = e.target.closest(".project-card");

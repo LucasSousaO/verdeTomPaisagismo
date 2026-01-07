@@ -1,0 +1,381 @@
+/* Projects */
+.projects-grid{
+  display: grid;
+  gap: 18px;
+
+  /* responsivo */
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  align-items: start;
+
+  /* evita "card gigante" quando tiver só 1 */
+  justify-items: start;
+}
+
+.project-card{
+  cursor: pointer;
+  overflow: hidden;
+  width: 100%;
+  max-width: 420px; /* evita card gigante quando tiver 1 */
+  display: flex;
+  flex-direction: column;
+}
+/* imagem só sugere comparação quando existe antes */
+.project-card[data-has-before="true"] .project-card__media{
+  cursor: ew-resize;
+}
+
+.project-card[data-has-before="false"] .project-card__media{
+  cursor: default;
+}
+
+.project-card__media{
+  position:relative;
+  border-radius:14px;
+  border:1px solid var(--line);
+  overflow:hidden;
+  aspect-ratio: 4 / 3; /* ajuste se quiser */
+  background:#fff;
+}
+
+.project-card__media img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transition: opacity .25s ease, transform .25s ease;
+}
+
+/* estado inicial */
+.project-card__media .img-before{
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* hover APENAS se houver antes */
+.project-card[data-has-before="true"]:hover .img-before{
+  opacity: 1;
+  transform: scale(1.02);
+}
+
+.project-card[data-has-before="true"]:hover .img-after{
+  opacity: 0;
+}
+
+.project-card__body{
+ position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  min-height: 170px;
+  /* espaço reservado pro link no canto */
+  padding-bottom: 44px;
+}
+
+.project-card__body h3{
+  margin:0 0 8px;
+  font-size:1.05rem;
+}
+
+.project-card__meta{
+  margin-top:auto;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  color:var(--muted);
+  font-size:.92rem;
+  align-items: flex-end;
+}
+
+.project-card__tag{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 10px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#fff;
+}
+.modal-inner--project{
+  background:#fff;
+  border:1px solid var(--line);
+}
+
+.project-modal{
+  padding:18px;
+}
+
+.project-modal__title{
+  margin:0 0 14px;
+  font-size:1.4rem;
+}
+/* link no canto inferior direito */
+.project-card__meta a.small{
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+
+  /* visual de link/botão (opcional) */
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.project-card__meta a{
+  margin-left:auto;             /* joga o link pra direita */
+  align-self:flex-end;          /* garante canto inferior */
+  white-space:nowrap;
+}
+/* o container interno do modal precisa ser "relative" */
+.modal-inner--project{
+  position: relative;
+}
+
+/* área de conteúdo do modal precisa permitir scroll interno */
+.modal-inner--project{
+  max-height: 92vh;
+  overflow: auto;
+}
+
+/* botões grudados à direita */
+.project-share{
+  position: sticky;
+  bottom: 14px;
+  margin-left: auto;     /* joga para a direita */
+  width: fit-content;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding-top: 10px;
+
+  /* opcional: fundo pra não misturar com texto */
+  background: linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,.7), rgba(255,255,255,0));
+}
+.project-modal__info{
+  padding-bottom: 84px; /* reserva espaço pra não colidir com nada no fundo */
+}
+.project-share__btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background: var(--brand);
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+  text-decoration:none;
+  height: min-content;
+  font-size: 10px;
+}
+
+.compare-wrapper {
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+}
+
+.project-share__btn--secondary{
+  background:#fff;
+  color: var(--brand2);
+}
+
+.compare{
+  position:relative;
+  width: 100%;
+  border-radius: 12px;
+  overflow:hidden;
+  border:1px solid var(--line);
+  background:#f7f7f7;
+  aspect-ratio: 16 / 9;
+  touch-action: none;
+}
+.compare[data-mode="single"]{
+  cursor: default;
+}
+
+.compare[data-mode="single"] .compare__labels{
+  display: none;
+}
+
+.compare[data-mode="single"] .compare__handle{
+  display: none;
+}
+
+.compare[data-mode="single"] .compare__range{
+  display: none;
+}
+/* contador abaixo */
+.compare-count {
+  margin-top: 6px;
+  font-size: 12px;
+  text-align: center;
+  opacity: 0.7;
+}
+/* Botões de navegação do modal (setas) */
+/* Setas laterais */
+.compare-nav {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: var(--green-600, #1f7a4a);
+  color: #fff;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.compare-nav--prev{ left:10px; }
+.compare-nav--next{ right:10px; }
+
+.compare-nav:hover{ background: rgba(0,0,0,.48); }
+
+.compare-count{
+  position:absolute;
+  right:12px;
+  bottom:12px;
+  background: rgba(0,0,0,.45);
+  color:#fff;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:.82rem;
+  z-index:5;
+}
+
+/* quando só tem 1 imagem, esconde navegação */
+.compare[data-nav="off"] .compare-nav,
+.compare[data-nav="off"] .compare-count{
+  display:none;
+}
+.compare__img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.compare__before{
+  /* a largura “aparece” conforme o range */
+  clip-path: inset(0 50% 0 0);
+}
+
+.compare__range{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  cursor:ew-resize;
+    -webkit-appearance: none;
+  appearance: none;
+  opacity: 0.001; /* não deixe 0, em alguns mobiles buga o hitbox */
+  touch-action: none; /* o range captura o gesto */
+}
+
+.compare__handle{
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:50%;
+  width:2px;
+  background: rgba(255,255,255,.9);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.12);
+}
+
+.compare__labels{
+  position:absolute;
+  left:12px;
+  right:12px;
+  top:12px;
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  pointer-events:none;
+}
+
+.compare__labels span{
+  font-size:.78rem;
+  letter-spacing:.08em;
+  padding:6px 10px;
+  border-radius:999px;
+  background: rgba(0,0,0,.55);
+  color:#fff;
+}
+
+.project-modal__info{
+  margin-top:14px;
+  display:grid;
+  gap:12px;
+}
+
+.info-row{
+  display:grid;
+  gap:6px;
+}
+
+.info-label{
+  font-weight:700;
+}
+
+.info-value{
+  color:var(--muted);
+}
+
+.info-row--small{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.info-pill{
+  border:1px solid var(--line);
+  background:#fff;
+  padding:8px 10px;
+  border-radius:999px;
+  color:var(--muted);
+  font-size:.92rem;
+  height: fit-content;
+}
+
+/* em telas grandes, força o limite de 3 colunas */
+@media (min-width: 1024px){
+.projects-grid{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    justify-items: stretch; /* agora preenche a coluna */
+  }
+
+  .project-card{
+    max-width: none; /* deixa o card ocupar a coluna */
+  }
+}
+
+@media (max-width: 768px){
+ .compare{ 
+      aspect-ratio: 4 / 3; 
+  }
+    .compare__range{
+    opacity: 0.01;
+  }
+    .compare-wrapper {
+    grid-template-columns: 32px 1fr 32px;
+  }
+
+  .compare-nav {
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+  }
+}
+
+/* 3) No mobile, botões um embaixo do outro (fica melhor e evita conflito) */
+@media (max-width: 520px){
+  .project-share{
+    grid-template-columns: 1fr;
+  }
+}
