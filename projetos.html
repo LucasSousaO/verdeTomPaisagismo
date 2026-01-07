@@ -415,8 +415,8 @@ function updateNavVisibility(){
   if (controls){
     controls.classList.remove("no-nav", "only-prev", "only-next");
 
-    if (showPrev && !showNext) controls.classList.add("only-prev"); // só esquerda -> end
-    else if (!showPrev && showNext) controls.classList.add("only-next"); // só direita -> start
+    if (showPrev && !showNext) controls.classList.add("only-next"); // só esquerda -> end
+    else if (!showPrev && showNext) controls.classList.add("only-prev"); // só direita -> start
     // se tiver as duas, fica no default (space-between)
   }
 }
