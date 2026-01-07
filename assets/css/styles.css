@@ -698,6 +698,14 @@ body.modal-open{
   display: flex;
   flex-direction: column;
 }
+/* imagem só sugere comparação quando existe antes */
+.project-card[data-has-before="true"] .project-card__media{
+  cursor: ew-resize;
+}
+
+.project-card[data-has-before="false"] .project-card__media{
+  cursor: default;
+}
 
 .project-card__media{
   position:relative;
@@ -718,9 +726,21 @@ body.modal-open{
 }
 
 .project-card__media .img-before{ opacity:0; }
-.project-card:hover .img-before{ opacity:1; }
-.project-card:hover .img-after{ opacity:0; }
-.project-card:hover .img-before{ transform: scale(1.02); }
+/* estado inicial */
+.project-card__media .img-before{
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* hover APENAS se houver antes */
+.project-card[data-has-before="true"]:hover .img-before{
+  opacity: 1;
+  transform: scale(1.02);
+}
+
+.project-card[data-has-before="true"]:hover .img-after{
+  opacity: 0;
+}
 
 .project-card__body{
  position: relative;
