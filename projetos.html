@@ -463,13 +463,24 @@ function openModal(project){
   lockBodyScroll();
 }
 
-prPrev?.addEventListener("click", (e) => {
+prPrevDesktop?.addEventListener("click", (e) => {
   e.preventDefault();
   e.stopPropagation();
   goPrev();
 });
 
-prNext?.addEventListener("click", (e) => {
+prPrevMobile?.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  goPrev();
+});
+prNextDesktop?.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  goNext();
+});
+
+prNextMobile?.addEventListener("click", (e) => {
   e.preventDefault();
   e.stopPropagation();
   goNext();
