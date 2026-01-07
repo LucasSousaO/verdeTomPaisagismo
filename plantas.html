@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#1f7a4a" />
+
+  <title>projetos | Verde Tom Paisagismo</title>
+  <meta name="description" content="Portfólio de projetos da Verde Tom: jardins residenciais, condomínios e áreas comuns. Atendimento em BH, Nova Lima e Lagoa Santa." />
+  <link rel="canonical" href="https://lucassousao.github.io/verdeTomPaisagismo/projetos.html" />
+  <meta name="robots" content="index,follow" />
+
+  <meta property="og:title" content="projetos | Verde Tom Paisagismo" />
+  <meta property="og:description" content="Veja projetos e execuções em Belo Horizonte e região." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://lucassousao.github.io/verdeTomPaisagismo/projetos.html" />
+  <meta property="og:image" content="https://lucassousao.github.io/verdeTomPaisagismo/assets/images/og.jpg" />
+
+  <link rel="icon" href="assets/images/vt.webp" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="stylesheet" href="assets/css/projects.css" />
+</head>
+
+<body>
+ <header class="site-header">
+  <div class="header-inner">
+    <a href="/verdeTomPaisagismo" class="logo" aria-label="Voltar para a Home">
+      <img src="assets/images/logo.webp" alt="Verde Tom Paisagismo">
+    </a>
+
+    <!-- Botão do menu (aparece só no mobile) -->
+<button class="menu-btn" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
+  <span class="menu-label"></span>
+  <span class="menu-label"></span>
+  <span class="menu-label"></span>
+</button>
+
+    <nav class="main-nav" id="mainNav" aria-label="Menu principal">
+      <a href="/verdeTomPaisagismo">Início</a>
+      <a href="atuacao.html">Atuação</a>
+      <a href="sobre.html">Sobre</a>
+      <a href="blog.html">Blog</a>
+      <a href="contato.html">Contato</a>
+    </nav>
+  </div>
+</header>
+
+  <main>
+    <section class="section">
+  <div class="container">
+    <h1>Projetos</h1>
+    <p class="small">Conheça um pouco do trabalho da Verde Tom e entenda sobre escopo e duração de alguns projetos.</p>
+
+    <div id="plantsGrid" class="projects-grid"></div>
+  </div>
+</section>
+
+<!-- MODAL (fora do grid) -->
+<div id="projectModal" class="modal" aria-hidden="true">
+  <button class="modal-close" type="button" aria-label="Fechar">✕</button>
+
+  <div class="modal-inner modal-inner--project">
+    <div class="project-modal">
+      <h2 id="prTitle" class="project-modal__title"></h2>
+
+ <div class="compare-wrapper">
+  <!-- SETAS DESKTOP -->
+  <button class="compare-nav compare-nav--prev compare-des" id="prPrevDesktop" type="button" aria-label="Imagem anterior">‹</button>
+
+  <div class="compare" id="compareBox">
+  <img id="prAfter" class="compare__img" alt="">
+  <img id="prBefore" class="compare__img compare__before" alt="">
+  <input id="prRange" class="compare__range" type="range" min="0" max="100" value="50" aria-label="Comparar antes e depois">
+  <div class="compare__handle" id="prHandle"></div>
+  <div class="compare-count" id="prCount"></div>
+  <div class="compare__labels">
+    <span>ANTES</span>
+    <span>DEPOIS</span>
+  </div>
+</div>
+
+
+  <button class="compare-nav compare-nav--next compare-des" id="prNextDesktop" type="button" aria-label="Próxima imagem">›</button>
+</div>
+
+<!-- CONTROLES MOBILE -->
+<div class="compare-controls">
+  <button class="compare-nav compare-nav--prev compare-mob" id="prPrevMobile" type="button" aria-label="Imagem anterior">‹</button>
+  <button class="compare-nav compare-nav--next compare-mob" id="prNextMobile" type="button" aria-label="Próxima imagem">›</button>
+</div>
+
+
+      <!-- Texto fixo abaixo (da planilha) -->
+      <div class="project-modal__info">
+        <div class="info-row">
+        <div class="info-label">Por que usar</div>
+        <div id="plPorque" class="info-value"></div>
+        </div>
+
+        <div class="info-row">
+        <div class="info-label">Cuidados</div>
+        <div id="plCuidados" class="info-value"></div>
+        </div>
+
+        <div class="info-row info-row--small">
+        <div class="info-pill">
+            <b>Nome científico:</b> <span id="plCientifico"></span>
+        </div>
+          <div class="project-share">
+        <a id="shareProjectWhatsApp" class="project-share__btn" target="_blank" rel="noopener">
+        Compartilhar no WhatsApp</a>
+        <button id="copyProjectLink" class="project-share__btn project-share__btn--secondary" type="button">
+        Copiar link</button>
+</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+
+    <div class="footer-main">
+      <a class="footer-instagram" 
+         href="https://www.instagram.com/verdetompaisagismo/" 
+         target="_blank" 
+         rel="noopener noreferrer"
+         aria-label="Instagram Cardim Paisagismo">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor"
+            d="M7.75 2h8.5A5.76 5.76 0 0 1 22 7.75v8.5A5.76 5.76 0 0 1 16.25 22h-8.5A5.76 5.76 0 0 1 2 16.25v-8.5A5.76 5.76 0 0 1 7.75 2Zm0 1.5A4.26 4.26 0 0 0 3.5 7.75v8.5A4.26 4.26 0 0 0 7.75 20.5h8.5a4.26 4.26 0 0 0 4.25-4.25v-8.5A4.26 4.26 0 0 0 16.25 3.5h-8.5ZM12 7a5 5 0 1 1 0 10a5 5 0 0 1 0-10Zm0 1.5a3.5 3.5 0 1 0 0 7a3.5 3.5 0 0 0 0-7Zm5.25-.88a.88.88 0 1 1 0 1.76a.88.88 0 0 1 0-1.76Z"/>
+        </svg>
+        instagram
+      </a>
+
+      <span class="footer-sep">•</span>
+
+      <span>Belo Horizonte, Minas Gerais</span>
+<br>
+      <a href="mailto:contato@verdetompaisagismo.com.br">
+        contato@verdetompaisagismo.com.br
+      </a>
+
+      <span class="footer-sep">•</span>
+
+      <a href="wa.me/+5531987415012">
+        +55 31 98741-5012
+      </a>
+    </div>
+
+    <div class="footer-copy">
+     © <span id="year"></span>  Verde Tom Paisagismo - Todos os direitos reservados.
+    </div>
+
+  </div>
+<a href="/verdeTomPaisagismo/contato.html" class="floating-cta" aria-label="Enviar proposta">Entre em contato</a>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+(async function(){
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdP_h8M1SSBrqtxsH0j0V6eQ9MN66HX4JhSG0KgP_wyGVZmVAfzMX_J-MFPqc90c54N4vpkjakM0pj/pub?gid=3559854&single=true&output=csv";
+
+  let projects = [];
+  let scrollY = 0;
+
+
+function isImageLikeUrl(v){
+  // aceita .jpg .jpeg .png .webp .gif .avif .svg (mesmo com ?query)
+  return /\.(jpe?g|png|webp|gif|avif|svg)(\?.*)?$/i.test(String(v || "").trim());
+}
+
+
+
+/**
+ * Aceita:
+ * - URL absoluta: https://site.com/img.jpg (ou com ?v=1)
+ * - caminho do repo: assets/images/x.webp | /assets/images/x.webp | ./assets/images/x.webp
+ * Retorna URL resolvida e pronta para <img src="">
+ */
+ 
+  function lockBodyScroll(){
+    scrollY = window.scrollY || 0;
+    document.body.classList.add("modal-open");
+    document.body.style.top = `-${scrollY}px`;
+  }
+  function unlockBodyScroll(){
+    document.body.classList.remove("modal-open");
+    document.body.style.top = "";
+    window.scrollTo(0, scrollY);
+  }
+
+  function slugify(s){
+    return String(s || "")
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+  }
+  function buildUrl(slug){
+    const base = window.location.href.split("#")[0];
+    return `${base}#${encodeURIComponent(slug)}`;
+  }
+
+  function parseCSV(text){
+    const rows = [];
+    let row = [];
+    let cur = "";
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i++){
+      const c = text[i];
+      const n = text[i+1];
+
+      if (c === '"' && inQuotes && n === '"'){ cur += '"'; i++; continue; }
+      if (c === '"'){ inQuotes = !inQuotes; continue; }
+
+      if (c === ',' && !inQuotes){ row.push(cur); cur = ""; continue; }
+      if ((c === '\n' || c === '\r') && !inQuotes){
+        if (cur.length || row.length){ row.push(cur); rows.push(row); }
+        cur = ""; row = [];
+        if (c === '\r' && n === '\n') i++;
+        continue;
+      }
+      cur += c;
+    }
+    if (cur.length || row.length){ row.push(cur); rows.push(row); }
+
+    const headers = rows.shift().map(h => h.replace(/^\uFEFF/, "").trim());
+    return rows
+      .filter(r => r.some(v => String(v||"").trim().length))
+      .map(r => {
+        const obj = {};
+        headers.forEach((h, idx) => obj[h] = String(r[idx] ?? "").trim());
+        return obj;
+      });
+  }
+
+  // Modal refs
+const modal = document.getElementById("projectModal");
+const btnClose = modal?.querySelector(".modal-close");
+const prTitle = document.getElementById("prTitle");
+const prAfter  = modal?.querySelector("#prAfter");
+const prBefore = modal?.querySelector("#prBefore");
+const prRange  = modal?.querySelector("#prRange");
+const prHandle = modal?.querySelector("#prHandle");
+const compareBox = modal?.querySelector("#compareBox");
+const prCount = modal?.querySelector("#prCount");
+const prPedido = document.getElementById("prPedido");
+const prEscopo = document.getElementById("prEscopo");
+const prDuracao = document.getElementById("prDuracao");
+const prLocal = document.getElementById("prLocal");
+
+const prPrevDesktop = document.getElementById("prPrevDesktop");
+const prNextDesktop = document.getElementById("prNextDesktop");
+const prPrevMobile  = document.getElementById("prPrevMobile");
+const prNextMobile  = document.getElementById("prNextMobile");
+
+const shareWA = document.getElementById("shareProjectWhatsApp");
+const btnCopy = document.getElementById("copyProjectLink");
+
+function setCompare(value){
+  const v = Math.max(0, Math.min(100, Number(value)));
+  prBefore.style.clipPath = `inset(0 ${100 - v}% 0 0)`;
+  prHandle.style.left = `${v}%`;
+}
+
+function setCompareFromClientX(clientX){
+  if (!compareBox || !prRange) return;
+  const r = compareBox.getBoundingClientRect();
+  if (!r.width) return;
+  const x = Math.max(0, Math.min(r.width, clientX - r.left));
+  const v = (x / r.width) * 100;
+  prRange.value = v;
+  setCompare(v);
+}
+
+let dragging = false;
+
+compareBox?.addEventListener("pointerdown", (e) => {
+  if (!modal?.classList.contains("open")) return;
+  e.preventDefault();
+  dragging = true;
+  compareBox.setPointerCapture?.(e.pointerId);
+  setCompareFromClientX(e.clientX);
+});
+
+compareBox?.addEventListener("pointermove", (e) => {
+  if (!dragging) return;
+  setCompareFromClientX(e.clientX);
+});
+
+function endDrag(){
+  dragging = false;
+}
+compareBox?.addEventListener("pointerup", endDrag);
+compareBox?.addEventListener("pointercancel", endDrag);
+compareBox?.addEventListener("lostpointercapture", endDrag);
+compareBox?.addEventListener("pointerleave", endDrag);
+
+let slides = [];
+let slideIndex = 0;
+
+function collectSlides(plant){
+  const slides = [];
+  for (let i = 1; i <= 5; i++){
+    const img = plant[`imagem${i}`];
+    if (!img) continue;
+
+    slides.push({
+      after: img,
+      mode: "single"
+    });
+  }
+  return slides;
+}
+
+
+function applySlide(idx){
+  if (!slides.length) return;
+
+  slideIndex = Math.max(0, Math.min(slides.length - 1, idx));
+  const s = slides[slideIndex];
+
+  // after sempre existe
+  prAfter.src = resolveImageSrc(s.after);
+  prAfter.alt = prTitle.textContent ? `Depois - ${prTitle.textContent}` : "Depois";
+
+  if (s.mode === "compare"){
+    prBefore.src = resolveImageSrc(s.before);
+    prBefore.alt = prTitle.textContent ? `Antes - ${prTitle.textContent}` : "Antes";
+
+    prBefore.style.display = "block";
+    prRange.style.display = "block";
+    prHandle.style.display = "block";
+    compareBox.dataset.mode = "compare";
+
+    prRange.value = 50;
+    setCompare(50);
+  } else {
+    // single
+    prBefore.src = "";
+    prBefore.style.display = "none";
+    prRange.style.display = "none";
+    prHandle.style.display = "none";
+    compareBox.dataset.mode = "single";
+    prAfter.style.clipPath = "none";
+  }
+
+  // contador
+  if (prCount) prCount.textContent = `${slideIndex + 1}/${slides.length}`;
+
+  // ✅ atualiza setas (regra 1/3, 2/3, 3/3)
+  updateNavVisibility();
+}
+
+
+function goPrev(){ applySlide(slideIndex - 1); }
+function goNext(){ applySlide(slideIndex + 1); }
+
+function toggleNav(btn, visible){
+  if (!btn) return;
+  btn.classList.toggle("is-hidden", !visible);
+  btn.disabled = !visible;
+}
+
+function setNavButton(btn, shouldShow){
+  if (!btn) return;
+  btn.classList.toggle("is-hidden", !shouldShow);
+  btn.disabled = !shouldShow;
+}
+
+function updateNavVisibility(){
+  const total = slides.length;
+
+  // caso 1: 0 ou 1 slide -> sem navegação
+  if (total <= 1){
+    setNavButton(prPrevDesktop, false);
+    setNavButton(prNextDesktop, false);
+    setNavButton(prPrevMobile,  false);
+    setNavButton(prNextMobile,  false);
+      
+    // ✅ layout mobile
+    const controls = document.querySelector(".compare-controls");
+    if (controls){
+      controls.classList.remove("only-prev", "only-next");
+      controls.classList.add("no-nav");
+    }
+    return;
+  }
+
+
+  // caso 2: 2+ slides
+  const isFirst = slideIndex === 0;
+  const isLast  = slideIndex === total - 1;
+
+  const showPrev = !isFirst; // aparece se NÃO for o primeiro
+  const showNext = !isLast;  // aparece se NÃO for o último
+
+  setNavButton(prPrevDesktop, showPrev);
+  setNavButton(prNextDesktop, showNext);
+  setNavButton(prPrevMobile,  showPrev);
+  setNavButton(prNextMobile,  showNext);
+    // ✅ layout mobile (start/end conforme a seta)
+  const controls = document.querySelector(".compare-controls");
+  if (controls){
+    controls.classList.remove("no-nav", "only-prev", "only-next");
+
+    if (showPrev && !showNext) controls.classList.add("only-next"); // só esquerda -> end
+    else if (!showPrev && showNext) controls.classList.add("only-prev"); // só direita -> start
+    // se tiver as duas, fica no default (space-between)
+  }
+}
+
+function openModal(project){
+  if (!modal) return;
+
+  const slug = String(project.slug || "").trim() || slugify(project.titulo || "");
+  history.pushState(null, "", `#${encodeURIComponent(slug)}`);
+
+plTitle.textContent      = plant.nome || plant.titulo || "";
+plCientifico.textContent = plant.nome_cientifico || "";
+plPorque.textContent     = plant.porque || "";
+plCuidados.textContent   = plant.cuidados || "";
+
+  slides = collectSlides(project);
+  slideIndex = 0;
+
+  if (!slides.length){
+    console.warn("Projeto publicado sem imagemDepoisUrl1..5:", project);
+    return;
+  }
+
+  applySlide(0); // ✅ já chama updateNavVisibility()
+
+  // SHARE
+  const url = buildUrl(slug);
+  const shareText = `Veja este projeto do Verde Tom: ${project.titulo || ""}\n${url}`;
+
+  if (shareWA){
+    shareWA.href = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+  }
+
+  if (btnCopy){
+    btnCopy.onclick = async () => {
+      const old = btnCopy.textContent;
+      try{
+        await navigator.clipboard.writeText(url);
+        btnCopy.textContent = "Link copiado!";
+        setTimeout(() => btnCopy.textContent = old || "Copiar link", 1400);
+      } catch {
+        prompt("Copie o link:", url);
+      }
+    };
+  }
+
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+  lockBodyScroll();
+}
+
+prPrevDesktop?.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  goPrev();
+});
+
+prPrevMobile?.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  goPrev();
+});
+prNextDesktop?.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  goNext();
+});
+
+prNextMobile?.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  goNext();
+});
+
+// teclado (quando modal aberto)
+document.addEventListener("keydown", (e) => {
+  if (!modal?.classList.contains("open")) return;
+  if (e.key === "ArrowLeft") goPrev();
+  if (e.key === "ArrowRight") goNext();
+});
+
+
+  function closeModal(){
+    if(!modal) return;
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden", "true");
+
+    if (btnCopy) btnCopy.onclick = null;
+
+    unlockBodyScroll();
+    history.pushState(null, "", window.location.href.split("#")[0]);
+  }
+
+  btnClose?.addEventListener("click", closeModal);
+  modal?.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+
+  // impede scroll “vazar” quando estiver no fundo cinza (desktop)
+  modal?.addEventListener("wheel", (e) => {
+  if (e.target === modal) e.preventDefault();
+}, { passive:false });
+
+modal?.addEventListener("touchmove", (e) => {
+  if (e.target === modal) e.preventDefault();
+}, { passive:false });
+  prRange?.addEventListener("input", (e) => setCompare(e.target.value));
+
+  function openBySlug(slug){
+    const s = decodeURIComponent(String(slug || "")).trim();
+    if(!s) return;
+    const idx = projects.findIndex(p => (p.slug || slugify(p.titulo || "")) === s);
+    if(idx >= 0) openModal(projects[idx]);
+  }
+
+  try{
+    const res = await fetch(CSV_URL, { cache:"no-store" });
+    if(!res.ok) throw new Error("Falha ao buscar CSV: " + res.status);
+    const csv = await res.text();
+
+    plants = parseCSV(csv)
+      .filter(p => (p.status || "").toLowerCase() === "publicado");
+
+    const grid = document.getElementById("plantsGrid");
+    if(!grid) return;
+
+    grid.innerHTML = projects.map((p, idx) => {
+  const slug = (p.slug || slugify(p.titulo || ""));
+  const url = buildUrl(slug);
+
+  const cats = (p.categorias || "")
+    .split(",")
+    .map(c => c.trim())
+    .filter(Boolean);
+
+  const after1 = String(p.imagemDepoisUrl1 || "").trim();
+  const before1 = String(p.imagemAntesUrl1 || "").trim();
+  const hasBefore = !!before1;
+
+  return `
+    <article
+      class="card project-card"
+      data-idx="${idx}"
+      data-slug="${slug}"
+      data-has-before="${hasBefore ? "true" : "false"}"
+      role="button"
+      tabindex="0"
+    >
+      <div class="project-card__media">
+        <img class="img-after" src="${resolveImageSrc(after1)}"
+          alt="${p.titulo ? `Depois - ${p.titulo}` : "Depois"}" loading="lazy">
+
+        ${hasBefore ? `
+          <img class="img-before" src="${resolveImageSrc(before1)}"
+            alt="${p.titulo ? `Antes - ${p.titulo}` : "Antes"}" loading="lazy">
+        ` : ``}
+      </div>
+
+      <div class="project-card__body">
+        <h3>${p.titulo || ""}</h3>
+
+        <div class="project-card__meta">
+          <span class="project-card__tag">⏱ ${p.duracao || "-"}</span>
+
+          <div class="project-card__categories">
+            ${cats.map(c => `<span class="badge">${c}</span>`).join("")}
+          </div>
+
+          <span class="project-card__tag">📍 ${p.local || "-"}</span>
+
+          <a class="small" href="${url}" onclick="event.preventDefault()">ver detalhes</a>
+        </div>
+      </div>
+    </article>
+  `;
+}).join("") || `<p class="small">Nenhum projeto publicado ainda.</p>`;
+
+
+    grid.addEventListener("click", (e) => {
+      const card = e.target.closest(".project-card");
+      if(!card) return;
+      openModal(projects[Number(card.dataset.idx)]);
+    });
+
+    grid.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      const card = e.target.closest(".project-card");
+      if(!card) return;
+      e.preventDefault();
+      openModal(projects[Number(card.dataset.idx)]);
+    });
+
+    // abre por hash
+    const hash = (window.location.hash || "").replace("#","").trim();
+    if(hash) openBySlug(hash);
+
+    window.addEventListener("hashchange", () => {
+      const h = (window.location.hash || "").replace("#","").trim();
+      if(h) openBySlug(h);
+    });
+
+  } catch(err){
+    console.error(err);
+  }
+})();
+</script>
+
+</body>
+</html>
