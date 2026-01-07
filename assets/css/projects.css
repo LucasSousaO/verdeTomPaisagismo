@@ -397,6 +397,17 @@
     margin-top: 0px;
   }
   .is-hidden { display: none !important; }
+  .compare-controls.no-nav{ 
+    display: none; 
+  }
+
+  .compare-controls.only-prev{
+    justify-content: end;
+  }
+
+  .compare-controls.only-next{
+    justify-content: start;
+  }
 }
 
 /* 3) No mobile, botões um embaixo do outro (fica melhor e evita conflito) */
