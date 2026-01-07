@@ -388,7 +388,7 @@ compare-mob{display: contents;}
 
   }
   .compare-des{display: none;}
-compare-mob{display: flex;}
+    .compare-mob{display: flex;}
 }
 
 /* 3) No mobile, botões um embaixo do outro (fica melhor e evita conflito) */
