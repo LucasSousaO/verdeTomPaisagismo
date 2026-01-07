@@ -19,6 +19,7 @@
   <link rel="icon" href="assets/images/vt.webp" />
   <link rel="stylesheet" href="assets/css/styles.css" />
   <link rel="stylesheet" href="assets/css/projects.css" />
+  <link rel="stylesheet" href="assets/css/plantas.css" />
 </head>
 
 <body>
@@ -251,9 +252,10 @@
   const modal = document.getElementById("projectModal");
   const btnClose = modal?.querySelector(".modal-close");
 
-  const prTitle  = modal?.querySelector("#prTitle");
-  const prAfter  = modal?.querySelector("#prAfter");
-  const prBefore = modal?.querySelector("#prBefore");
+const plTitle      = modal?.querySelector("#plTitle");
+const plPorque     = modal?.querySelector("#plPorque");
+const plCuidados   = modal?.querySelector("#plCuidados");
+const plCientifico = modal?.querySelector("#plCientifico");
   const prRange  = modal?.querySelector("#prRange");
   const prHandle = modal?.querySelector("#prHandle");
   const compareBox = modal?.querySelector("#compareBox");
@@ -427,50 +429,70 @@
   });
 
   function openModal(plant){
-    if (!modal) return;
+  if (!modal) return;
 
-    const titulo = pick(plant, ["titulo", "Título", "nome", "Nome"]).trim();
-    const slug = pick(plant, ["slug", "Slug"]).trim() || slugify(titulo);
+  const titulo = pick(plant, ["titulo", "Título", "nome", "Nome"]).trim();
+  const slug   = pick(plant, ["slug", "Slug"]).trim() || slugify(titulo);
 
-    history.pushState(null, "", `#${encodeURIComponent(slug)}`);
+  history.pushState(null, "", `#${encodeURIComponent(slug)}`);
 
-    if (prTitle) prTitle.textContent = titulo || "Planta";
+  // ✅ textos do modal (colunas com acento e espaço)
+  const cientifico = pick(plant, [
+    "nome científico", "nome cientifico", "Nome científico", "Nome cientifico",
+    "nome_cientifico", "nomeCientifico"
+  ]).trim();
 
-    slides = collectSlides(plant);
-    slideIndex = 0;
+  const porque = pick(plant, [
+    "por que", "por quê", "Por que", "Por quê",
+    "porque", "Porquê", "porquê",
+    "por_que", "porQue"
+  ]).trim();
 
-    if (!slides.length){
-      console.warn("Planta publicada sem imagens 1..5:", plant);
-      return;
-    }
+  const cuidados = pick(plant, [
+    "cuidados", "Cuidados",
+    "cuidado", "Cuidado"
+  ]).trim();
 
-    applySlide(0);
+  if (plTitle)      plTitle.textContent      = titulo || "Planta";
+  if (plCientifico) plCientifico.textContent = cientifico || "-";
+  if (plPorque)     plPorque.textContent     = porque || "-";
+  if (plCuidados)   plCuidados.textContent   = cuidados || "-";
 
-    // share
-    const url = buildUrl(slug);
-    const shareText = `Veja esta planta do Verde Tom: ${titulo}\n${url}`;
+  // slides
+  slides = collectSlides(plant);
+  slideIndex = 0;
 
-    if (shareWA){
-      shareWA.href = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
-    }
-
-    if (btnCopy){
-      btnCopy.onclick = async () => {
-        const old = btnCopy.textContent;
-        try{
-          await navigator.clipboard.writeText(url);
-          btnCopy.textContent = "Link copiado!";
-          setTimeout(() => btnCopy.textContent = old || "Copiar link", 1400);
-        } catch {
-          prompt("Copie o link:", url);
-        }
-      };
-    }
-
-    modal.classList.add("open");
-    modal.setAttribute("aria-hidden", "false");
-    lockBodyScroll();
+  if (!slides.length){
+    console.warn("Planta publicada sem imagens 1..5:", plant);
+    return;
   }
+
+  applySlide(0);
+
+  // share
+  const url = buildUrl(slug);
+  const shareText = `Veja esta planta do Verde Tom: ${titulo}\n${url}`;
+
+  if (shareWA) shareWA.href = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+
+  if (btnCopy){
+    btnCopy.onclick = async () => {
+      const old = btnCopy.textContent;
+      try{
+        await navigator.clipboard.writeText(url);
+        btnCopy.textContent = "Link copiado!";
+        setTimeout(() => btnCopy.textContent = old || "Copiar link", 1400);
+      } catch {
+        prompt("Copie o link:", url);
+      }
+    };
+  }
+
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+  lockBodyScroll();
+}
+
 
   function closeModal(){
     if (!modal) return;
