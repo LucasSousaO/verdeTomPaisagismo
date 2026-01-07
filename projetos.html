@@ -63,9 +63,14 @@
     <div class="project-modal">
       <h2 id="prTitle" class="project-modal__title"></h2>
 
-      <!-- Slider antes/depois -->
-<div class="compare-wrapper">
-<button class="compare-nav compare-nav--prev compare-des" id="prPrev" type="button" aria-label="Imagem anterior">‹</button>
+ <div class="compare-wrapper">
+
+  <!-- SETAS DESKTOP -->
+  <button class="compare-nav compare-nav--prev compare-des"
+          id="prPrevDesktop"
+          type="button"
+          aria-label="Imagem anterior">‹</button>
+
   <div class="compare" id="compareBox">
     <img id="prAfter" class="compare__img" alt="">
     <img id="prBefore" class="compare__img compare__before" alt="">
@@ -77,11 +82,26 @@
       <span>DEPOIS</span>
     </div>
   </div>
-  <button class="compare-nav compare-nav--next compare-des" id="prNext" type="button" aria-label="Próxima imagem">›</button></div>
-  <div class="compare-controls">
-  <button class="compare-nav compare-nav--prev compare-mob" id="prPrev" type="button" aria-label="Imagem anterior">‹</button>
-  <button class="compare-nav compare-nav--next compare-mob" id="prNext" type="button" aria-label="Próxima imagem">›</button></div>
+
+  <button class="compare-nav compare-nav--next compare-des"
+          id="prNextDesktop"
+          type="button"
+          aria-label="Próxima imagem">›</button>
 </div>
+
+<!-- CONTROLES MOBILE -->
+<div class="compare-controls">
+  <button class="compare-nav compare-nav--prev compare-mob"
+          id="prPrevMobile"
+          type="button"
+          aria-label="Imagem anterior">‹</button>
+
+  <button class="compare-nav compare-nav--next compare-mob"
+          id="prNextMobile"
+          type="button"
+          aria-label="Próxima imagem">›</button>
+</div>
+
 
       <!-- Texto fixo abaixo (da planilha) -->
       <div class="project-modal__info">
@@ -246,8 +266,15 @@ const prEscopo = document.getElementById("prEscopo");
 const prDuracao = document.getElementById("prDuracao");
 const prLocal = document.getElementById("prLocal");
 
-const prPrev = document.getElementById("prPrev");
-const prNext = document.getElementById("prNext");
+const prPrevDesktop = document.getElementById("prPrevDesktop");
+const prNextDesktop = document.getElementById("prNextDesktop");
+const prPrevMobile  = document.getElementById("prPrevMobile");
+const prNextMobile  = document.getElementById("prNextMobile");
+
+prPrevDesktop?.addEventListener("click", goPrev);
+prNextDesktop?.addEventListener("click", goNext);
+prPrevMobile?.addEventListener("click", goPrev);
+prNextMobile?.addEventListener("click", goNext);
 const prCount = document.getElementById("prCount");
 
 const compareBox = document.getElementById("compareBox"); // ✅ só uma vez
