@@ -389,18 +389,26 @@ function applySlide(idx){
   const showPrev = hasNav && slideIndex > 0;
   const showNext = hasNav && slideIndex < (slides.length - 1);
 
-  if (prPrev){
-    prPrev.style.display = showPrev ? "flex" : "contents";
-    prPrev.disabled = !showPrev;
-  }
-  if (prNext){
-    prNext.style.display = showNext ? "flex" : "contents";
-    prNext.disabled = !showNext;
-  }
-}
 
 function goPrev(){ applySlide(slideIndex - 1); }
 function goNext(){ applySlide(slideIndex + 1); }
+
+function updateNavVisibility() {
+  const hasPrev = slideIndex > 0;
+  const hasNext = slideIndex < slides.length - 1;
+
+  toggleNav(prPrevDesktop, hasPrev);
+  toggleNav(prNextDesktop, hasNext);
+  toggleNav(prPrevMobile, hasPrev);
+  toggleNav(prNextMobile, hasNext);
+}
+
+function toggleNav(btn, visible){
+  if (!btn) return;
+
+  btn.classList.toggle("is-hidden", !visible);
+  btn.disabled = !visible;
+}
 
 function openModal(project){
   if (!modal) return;
