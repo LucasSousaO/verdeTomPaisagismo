@@ -63,22 +63,25 @@
       <h2 id="prTitle" class="project-modal__title"></h2>
 
       <!-- Slider antes/depois -->
-      <div class="compare" id="compareBox">
-        <img id="prAfter" class="compare__img" alt="">
-        <img id="prBefore" class="compare__img compare__before" alt="">
-        <input id="prRange" class="compare__range" type="range" min="0" max="100" value="50" aria-label="Comparar antes e depois">
-        <div class="compare__handle" id="prHandle" aria-hidden="true"></div>
+<div class="compare-wrapper">
+  <button class="compare-nav compare-nav--prev" id="prPrev" type="button" aria-label="Imagem anterior">‹</button>
 
-        <div class="compare__labels" aria-hidden="true">
-          <span>ANTES</span>
-          <span>DEPOIS</span>
-        </div>
-        <button class="compare-nav compare-nav--prev" id="prPrev" type="button" aria-label="Imagem anterior">‹</button>
-<button class="compare-nav compare-nav--next" id="prNext" type="button" aria-label="Próxima imagem">›</button>
+  <div class="compare" id="compareBox">
+    <img id="prAfter" class="compare__img" alt="">
+    <img id="prBefore" class="compare__img compare__before" alt="">
+    <input id="prRange" class="compare__range" type="range">
+    <div class="compare__handle" id="prHandle"></div>
 
-<div class="compare-count" id="prCount" aria-hidden="true"></div>
+    <div class="compare__labels">
+      <span>ANTES</span>
+      <span>DEPOIS</span>
+    </div>
+  </div>
 
-      </div>
+  <button class="compare-nav compare-nav--next" id="prNext" type="button" aria-label="Próxima imagem">›</button>
+</div>
+
+<div class="compare-count" id="prCount"></div>
 
       <!-- Texto fixo abaixo (da planilha) -->
       <div class="project-modal__info">

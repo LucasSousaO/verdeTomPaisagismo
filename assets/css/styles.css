@@ -829,6 +829,14 @@ body.modal-open{
   font-size: 10px;
 }
 
+.compare-wrapper {
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+}
+
 .project-share__btn--secondary{
   background:#fff;
   color: var(--brand2);
@@ -836,7 +844,8 @@ body.modal-open{
 
 .compare{
   position:relative;
-  border-radius:16px;
+  width: 100%;
+  border-radius: 12px;
   overflow:hidden;
   border:1px solid var(--line);
   background:#f7f7f7;
@@ -858,25 +867,28 @@ body.modal-open{
 .compare[data-mode="single"] .compare__range{
   display: none;
 }
+/* contador abaixo */
+.compare-count {
+  margin-top: 6px;
+  font-size: 12px;
+  text-align: center;
+  opacity: 0.7;
+}
 /* Botões de navegação do modal (setas) */
-.compare-nav{
-  position:absolute;
-  top:50%;
-  transform: translateY(-50%);
-  width:38px;
-  height:38px;
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,.6);
-  background: rgba(0,0,0,.35);
-  color:#fff;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:24px;
-  line-height:1;
-  z-index:5;
-  backdrop-filter: blur(6px);
+/* Setas laterais */
+.compare-nav {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: var(--green-600, #1f7a4a);
+  color: #fff;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .compare-nav--prev{ left:10px; }
@@ -1099,6 +1111,15 @@ body.modal-open{
   }
     .compare__range{
     opacity: 0.01;
+  }
+    .compare-wrapper {
+    grid-template-columns: 32px 1fr 32px;
+  }
+
+  .compare-nav {
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
   }
 }
 
