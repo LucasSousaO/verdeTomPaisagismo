@@ -260,7 +260,7 @@
 /* quando só tem 1 imagem, esconde navegação */
 .compare[data-nav="off"] .compare-nav,
 .compare[data-nav="off"] .compare-count{
-  display:none;
+  display:contents;
 }
 .compare__img{
   position:absolute;
