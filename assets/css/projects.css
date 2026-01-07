@@ -243,8 +243,6 @@
 .compare-nav--prev{ left:10px; }
 .compare-nav--next{ right:10px; }
 
-.compare-nav:hover{ background: rgba(0,0,0,.48); }
-
 .compare-count{
   position:absolute;
   right:12px;
@@ -383,6 +381,8 @@
   }
   .compare-controls{
     display: flex;
+    justify-content: space-between;
+
   }
 }
 
