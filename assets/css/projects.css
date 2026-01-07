@@ -396,6 +396,7 @@
   .project-modal__info {
     margin-top: 0px;
   }
+  .is-hidden { display: none !important; }
 }
 
 /* 3) No mobile, botões um embaixo do outro (fica melhor e evita conflito) */
