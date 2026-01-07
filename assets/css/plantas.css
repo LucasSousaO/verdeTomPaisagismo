@@ -213,9 +213,8 @@
   display: none;
 }
 
-.compare[data-mode="single"] .compare__range{
-  display: none;
-}
+.compare__range, .compare__handle { display: none !important; }
+
 /* contador abaixo */
 .compare-count {
   margin-top: 6px;
@@ -304,7 +303,7 @@
   left:12px;
   right:12px;
   top:12px;
-  display:flex;
+  display:none;
   justify-content:space-between;
   gap:10px;
   pointer-events:none;
