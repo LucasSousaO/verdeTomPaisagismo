@@ -317,13 +317,19 @@
     const projects = parseCSV(csv)
       .filter(p => (p.status || "").toLowerCase() === "publicado");
 
+      const recentProjects = projects
+  .filter(p => (p.status || "").toLowerCase() === "publicado")
+  .filter(p => p.data) // garante que tem data
+  .sort((a, b) => new Date(b.data) - new Date(a.data))
+  .slice(0, 4);
+
     // se você já tiver uma coluna de ordem/data, pode ordenar aqui.
     // Exemplo: mais recentes primeiro:
     // projects.sort((a,b) => (b.data || "").localeCompare(a.data || ""));
 
     const top4 = projects.slice(0, 4);
 
-    grid.innerHTML = top4.map(p => {
+    grid.innerHTML = recentProjects.map(p => {
       const slug = String(p.slug || "").trim() || slugify(p.titulo || "");
       const href = `projetos.html#${encodeURIComponent(slug)}`;
       const imgSrc = pickCoverImage(p);
