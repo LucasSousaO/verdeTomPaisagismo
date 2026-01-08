@@ -53,7 +53,39 @@
     <div id="plantsGrid" class="plants-grid"></div>
   </div>
 </section>
+<!-- search-->
+ <div class="plants-filters" aria-label="Filtros de plantas">
+  <div class="plants-filters__row">
+    <div class="plants-field">
+      <label for="fName">Nome</label>
+      <input id="fName" type="text" placeholder="Ex.: Liríope" autocomplete="off" />
+      <div id="fNameSuggest" class="plants-suggest" hidden></div>
+    </div>
 
+    <div class="plants-field">
+      <label for="fCats">Categorias</label>
+      <select id="fCats" multiple aria-label="Filtrar por categorias"></select>
+      <small class="plants-hint">Use Ctrl/Cmd para múltiplas.</small>
+    </div>
+
+    <div class="plants-field">
+      <label for="fSci">Nome científico</label>
+      <input id="fSci" type="text" placeholder="Ex.: Liriope muscari" />
+    </div>
+
+    <div class="plants-field">
+      <label for="fCare">Cuidados</label>
+      <input id="fCare" type="text" placeholder="Ex.: sol pleno, regas..." />
+    </div>
+  </div>
+
+  <div class="plants-filters__actions">
+    <button id="fClear" type="button" class="btn-filter btn-filter--secondary">Limpar</button>
+    <div id="fCount" class="plants-count" aria-live="polite"></div>
+  </div>
+</div>
+
+ <!---Fim Search-->
 <!-- MODAL (fora do grid) -->
 <div id="projectModal" class="modal" aria-hidden="true">
   <button class="modal-close" type="button" aria-label="Fechar">✕</button>
@@ -271,6 +303,15 @@ const prBefore = modal?.querySelector("#prBefore");
 
   const shareWA = modal?.querySelector("#shareProjectWhatsApp");
   const btnCopy = modal?.querySelector("#copyProjectLink");
+
+  // ===== filtros =====
+const fName = document.getElementById("fName");
+const fNameSuggest = document.getElementById("fNameSuggest");
+const fCats = document.getElementById("fCats");
+const fSci  = document.getElementById("fSci");
+const fCare = document.getElementById("fCare");
+const fClear = document.getElementById("fClear");
+const fCount = document.getElementById("fCount");
 
   // ===== modal scroll lock (opcional) =====
   let scrollY = 0;
@@ -508,7 +549,132 @@ const prBefore = modal?.querySelector("#prBefore");
 
   btnClose?.addEventListener("click", closeModal);
   modal?.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+function splitCats(v){
+  return String(v || "")
+    .split(",")
+    .map(s => s.trim())
+    .filter(Boolean);
+}
 
+function buildCatsOptions(plantsList){
+  if (!fCats) return;
+  const set = new Set();
+  plantsList.forEach(p => splitCats(pick(p, ["categorias","Categorias"])).forEach(c => set.add(c)));
+  const all = Array.from(set).sort((a,b) => a.localeCompare(b, "pt-BR"));
+
+  fCats.innerHTML = all.map(c => `<option value="${c}">${c}</option>`).join("");
+}
+
+function getSelectedCats(){
+  if (!fCats) return [];
+  return Array.from(fCats.selectedOptions).map(o => o.value);
+}
+
+function includesText(hay, needle){
+  const h = String(hay || "").toLowerCase();
+  const n = String(needle || "").trim().toLowerCase();
+  if (!n) return true;
+  return h.includes(n);
+}
+
+function applyFilters(){
+  const nameQ = fName?.value || "";
+  const sciQ  = fSci?.value || "";
+  const careQ = fCare?.value || "";
+  const selectedCats = getSelectedCats();
+
+  const filtered = plants.filter(p => {
+    const titulo = pick(p, ["titulo","Título","nome","Nome"]).trim();
+    const cientifico = pick(p, [
+      "nome científico","nome cientifico","Nome científico","Nome cientifico",
+      "nome_cientifico","nomeCientifico"
+    ]).trim();
+
+    const cuidados = pick(p, ["cuidados","Cuidados","cuidado","Cuidado"]).trim();
+    const cats = splitCats(pick(p, ["categorias","Categorias"]));
+
+    // nome (match por contains)
+    if (!includesText(titulo, nameQ)) return false;
+
+    // nome científico
+    if (!includesText(cientifico, sciQ)) return false;
+
+    // cuidados
+    if (!includesText(cuidados, careQ)) return false;
+
+    // categorias (se selecionou, precisa conter todas selecionadas)
+    if (selectedCats.length){
+      for (const sc of selectedCats){
+        if (!cats.includes(sc)) return false;
+      }
+    }
+    return true;
+  });
+
+  renderGrid(filtered);
+  updateCount(filtered.length);
+}
+
+function updateCount(n){
+  if (!fCount) return;
+  fCount.textContent = `${n} resultado(s)`;
+}
+
+function renderGrid(list){
+  if (!grid) return;
+
+  grid.innerHTML = list.map((p) => {
+    const titulo = pick(p, ["titulo","Título","nome","Nome"]).trim();
+    const slug = pick(p, ["slug","Slug"]).trim() || slugify(titulo);
+    const url = buildUrl(slug);
+
+    const cats = splitCats(pick(p, ["categorias","Categorias"]));
+    const img1 = getPlantImage(p, 1);
+
+    // nome científico (para você depois colocar em cima da imagem)
+    const cientifico = pick(p, [
+      "nome científico","nome cientifico","Nome científico","Nome cientifico",
+      "nome_cientifico","nomeCientifico"
+    ]).trim();
+
+    return `
+      <article class="card plants-card"
+        data-slug="${slug}"
+        role="button"
+        tabindex="0"
+      >
+        <div class="plants-card__media">
+          ${img1 ? `<img class="img-after" src="${resolveImg(img1)}" alt="${titulo}" loading="lazy">` : ``}
+          ${cientifico ? `<span class="plants-card__sci">${cientifico}</span>` : ``}
+        </div>
+
+        <div class="plants-card__body">
+          <h3>${titulo || ""}</h3>
+
+          <div class="plants-card__meta">
+            <div class="plants-card__categories">
+              ${cats.map(c => `<span class="badge">${c}</span>`).join("")}
+            </div>
+
+            <a class="small" href="${url}" onclick="event.preventDefault()">ver detalhes</a>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join("") || `<p class="small">Nenhum catálogo publicado ainda.</p>`;
+}
+
+function findPlantBySlug(slug){
+  const s = decodeURIComponent(String(slug || "")).trim();
+  if(!s) return null;
+
+  const idx = plants.findIndex(p => {
+    const titulo = pick(p, ["titulo","Título","nome","Nome"]).trim();
+    const pslug  = pick(p, ["slug","Slug"]).trim() || slugify(titulo);
+    return pslug === s;
+  });
+  return idx >= 0 ? plants[idx] : null;
+}
   // ===== fetch + render =====
   try{
     const res = await fetch(CSV_URL, { cache: "no-store" });
@@ -525,56 +691,94 @@ const prBefore = modal?.querySelector("#prBefore");
 
     if (!grid) return;
 
-    grid.innerHTML = plants.map((p, idx) => {
-      const titulo = pick(p, ["titulo", "Título", "nome", "Nome"]).trim();
-      const slug = pick(p, ["slug", "Slug"]).trim() || slugify(titulo);
-      const url = buildUrl(slug);
+   buildCatsOptions(plants);
+namePool = uniqueNames(plants);
 
-      const cats = pick(p, ["categorias", "Categorias"]).split(",").map(s => s.trim()).filter(Boolean);
+// primeira renderização
+renderGrid(plants);
+updateCount(plants.length);
 
-      const img1 = getPlantImage(p, 1);
+grid.addEventListener("click", (e) => {
+  const card = e.target.closest(".plants-card");
+  if(!card) return;
+  const plant = findPlantBySlug(card.dataset.slug);
+  if (plant) openModal(plant);
+});
 
-      return `
-        <article class="card plants-card"
-          data-idx="${idx}"
-          data-slug="${slug}"
-          role="button"
-          tabindex="0"
-        >
-          <div class="plants-card__media">
-            ${img1 ? `<img class="img-after" src="${resolveImg(img1)}" alt="${titulo}" loading="lazy">` : ``}
-            </div>
+grid.addEventListener("keydown", (e) => {
+  if (e.key !== "Enter" && e.key !== " ") return;
+  const card = e.target.closest(".plants-card");
+  if(!card) return;
+  e.preventDefault();
+  const plant = findPlantBySlug(card.dataset.slug);
+  if (plant) openModal(plant);
+});
 
-          <div class="plants-card__body">
-            <h3>${titulo || ""}</h3>
+function uniqueNames(plantsList){
+  const set = new Set();
+  plantsList.forEach(p => {
+    const titulo = pick(p, ["titulo","Título","nome","Nome"]).trim();
+    if (titulo) set.add(titulo);
+  });
+  return Array.from(set).sort((a,b) => a.localeCompare(b, "pt-BR"));
+}
 
-            <div class="plants-card__meta">
-              <div class="plants-card__categories">
-                ${cats.map(c => `<span class="badge">${c}</span>`).join("")}
-              </div>
+let namePool = [];
 
-              <a class="small" href="${url}" onclick="event.preventDefault()">ver detalhes</a>
-            </div>
-          </div>
-        </article>
-      `;
-    }).join("") || `<p class="small">Nenhum catálogo publicado ainda.</p>`;
+function hideSuggest(){
+  if (!fNameSuggest) return;
+  fNameSuggest.hidden = true;
+  fNameSuggest.innerHTML = "";
+}
 
-    grid.addEventListener("click", (e) => {
-      const card = e.target.closest(".plants-card");
-      if(!card) return;
-      const i = Number(card.dataset.idx);
-      openModal(plants[i]);
-    });
+function showSuggest(items){
+  if (!fNameSuggest) return;
+  if (!items.length){ hideSuggest(); return; }
 
-    grid.addEventListener("keydown", (e) => {
-      if (e.key !== "Enter" && e.key !== " ") return;
-      const card = e.target.closest(".plants-card");
-      if(!card) return;
-      e.preventDefault();
-      const i = Number(card.dataset.idx);
-      openModal(plants[i]);
-    });
+  fNameSuggest.innerHTML = items.slice(0, 8).map(t => (
+    `<button type="button" data-value="${t.replace(/"/g, "&quot;")}">${t}</button>`
+  )).join("");
+
+  fNameSuggest.hidden = false;
+}
+
+fNameSuggest?.addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-value]");
+  if (!btn) return;
+  fName.value = btn.dataset.value || "";
+  hideSuggest();
+  applyFilters();
+});
+
+fName?.addEventListener("input", () => {
+  const q = (fName.value || "").trim().toLowerCase();
+  if (!q){ hideSuggest(); applyFilters(); return; }
+
+  const matches = namePool.filter(n => n.toLowerCase().includes(q));
+  showSuggest(matches);
+  // filtra enquanto digita
+  applyFilters();
+});
+
+fName?.addEventListener("blur", () => {
+  // pequeno delay pra permitir clique nas sugestões
+  setTimeout(hideSuggest, 150);
+});
+
+fCats?.addEventListener("change", applyFilters);
+fSci?.addEventListener("input", applyFilters);
+fCare?.addEventListener("input", applyFilters);
+
+fClear?.addEventListener("click", () => {
+  if (fName) fName.value = "";
+  if (fSci)  fSci.value = "";
+  if (fCare) fCare.value = "";
+  if (fCats) Array.from(fCats.options).forEach(o => o.selected = false);
+
+  hideSuggest();
+  renderGrid(plants);
+  updateCount(plants.length);
+});
 
     // abre por hash
     function openBySlug(slug){
