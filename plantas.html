@@ -571,7 +571,7 @@ function splitCats(v){
     .map(s => s.trim())
     .filter(Boolean);
 }
-/*
+
 function buildCatsOptions(plantsList){
   if (!fCats) return;
   const set = new Set();
@@ -584,7 +584,7 @@ function buildCatsOptions(plantsList){
 function getSelectedCats(){
   if (!fCats) return [];
   return Array.from(fCats.selectedOptions).map(o => o.value);
-}*/
+}
 
 function includesText(hay, needle){
   const h = String(hay || "").toLowerCase();
@@ -760,7 +760,7 @@ function findPlantBySlug(slug){
 
     if (!grid) return;
 
-   //buildCatsOptions(plants);
+   buildCatsOptions(plants);
 function uniqueNames(plantsList){
   const set = new Set();
   plantsList.forEach(p => {
