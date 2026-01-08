@@ -318,7 +318,7 @@ const plBefore = modal?.querySelector("#plBefore");
   // ===== filtros =====
 const fName = document.getElementById("fName");
 const fNameSuggest = document.getElementById("fNameSuggest");
-//const fCats = document.getElementById("fCats");
+const fCats = document.getElementById("fCats");
 const fSci  = document.getElementById("fSci");
 const fCare = document.getElementById("fCare");
 const fClear = document.getElementById("fClear");
@@ -830,7 +830,7 @@ fName?.addEventListener("blur", () => {
   setTimeout(hideSuggest, 150);
 });
 
-//fCats?.addEventListener("change", applyFilters);
+fCats?.addEventListener("change", applyFilters);
 fSci?.addEventListener("input", applyFilters);
 fCare?.addEventListener("input", applyFilters);
 
@@ -838,7 +838,7 @@ fClear?.addEventListener("click", () => {
   if (fName) fName.value = "";
   if (fSci)  fSci.value = "";
   if (fCare) fCare.value = "";
-  //if (fCats) Array.from(fCats.options).forEach(o => o.selected = false);
+  if (fCats) Array.from(fCats.options).forEach(o => o.selected = false);
 
   selectedCats.clear();
   catPanel?.querySelectorAll("input[type=checkbox]").forEach(chk => chk.checked = false);
