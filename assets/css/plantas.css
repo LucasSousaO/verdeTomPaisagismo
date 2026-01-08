@@ -69,9 +69,8 @@
  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 10px;
   padding: 14px;
-  min-height: 170px;
+  min-height: 140px;
   /* espaço reservado pro link no canto */
   padding-bottom: 44px;
 }
@@ -268,7 +267,7 @@
   inset:0;
   width:100%;
   height:100%;
-  object-fit:cover;
+  object-fit:contain;
 }
 
 .compare__before{
