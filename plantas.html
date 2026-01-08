@@ -98,7 +98,7 @@
 
   <div class="modal-inner modal-inner--project">
     <div class="plants-modal">
-      <h2 id="prTitle" class="plants-modal__title"></h2>
+      <h2 id="plTitle" class="plants-modal__title"></h2>
 
  <div class="compare-wrapper">
   <!-- SETAS DESKTOP -->
@@ -318,7 +318,7 @@ const prBefore = modal?.querySelector("#prBefore");
   // ===== filtros =====
 const fName = document.getElementById("fName");
 const fNameSuggest = document.getElementById("fNameSuggest");
-const fCats = document.getElementById("fCats");
+//const fCats = document.getElementById("fCats");
 const fSci  = document.getElementById("fSci");
 const fCare = document.getElementById("fCare");
 const fClear = document.getElementById("fClear");
@@ -571,7 +571,7 @@ function splitCats(v){
     .map(s => s.trim())
     .filter(Boolean);
 }
-
+/*
 function buildCatsOptions(plantsList){
   if (!fCats) return;
   const set = new Set();
@@ -584,19 +584,13 @@ function buildCatsOptions(plantsList){
 function getSelectedCats(){
   if (!fCats) return [];
   return Array.from(fCats.selectedOptions).map(o => o.value);
-}
+}*/
 
 function includesText(hay, needle){
   const h = String(hay || "").toLowerCase();
   const n = String(needle || "").trim().toLowerCase();
   if (!n) return true;
   return h.includes(n);
-}
-function getCategories(plant){
-  return pick(plant, ["categorias","Categorias"])
-    .split(",")
-    .map(s => s.trim())
-    .filter(Boolean);
 }
 
 function buildCategoryOptions(){
@@ -767,6 +761,15 @@ function findPlantBySlug(slug){
     if (!grid) return;
 
    buildCatsOptions(plants);
+function uniqueNames(plantsList){
+  const set = new Set();
+  plantsList.forEach(p => {
+    const titulo = pick(p, ["titulo","Título","nome","Nome"]).trim();
+    if (titulo) set.add(titulo);
+  });
+  return Array.from(set).sort((a,b) => a.localeCompare(b, "pt-BR"));
+}
+
 namePool = uniqueNames(plants);
 
 // primeira renderização
@@ -789,14 +792,7 @@ grid.addEventListener("keydown", (e) => {
   if (plant) openModal(plant);
 });
 
-function uniqueNames(plantsList){
-  const set = new Set();
-  plantsList.forEach(p => {
-    const titulo = pick(p, ["titulo","Título","nome","Nome"]).trim();
-    if (titulo) set.add(titulo);
-  });
-  return Array.from(set).sort((a,b) => a.localeCompare(b, "pt-BR"));
-}
+
 
 function hideSuggest(){
   if (!fNameSuggest) return;
@@ -838,7 +834,7 @@ fName?.addEventListener("blur", () => {
   setTimeout(hideSuggest, 150);
 });
 
-fCats?.addEventListener("change", applyFilters);
+//fCats?.addEventListener("change", applyFilters);
 fSci?.addEventListener("input", applyFilters);
 fCare?.addEventListener("input", applyFilters);
 
@@ -846,7 +842,11 @@ fClear?.addEventListener("click", () => {
   if (fName) fName.value = "";
   if (fSci)  fSci.value = "";
   if (fCare) fCare.value = "";
-  if (fCats) Array.from(fCats.options).forEach(o => o.selected = false);
+  //if (fCats) Array.from(fCats.options).forEach(o => o.selected = false);
+
+  selectedCats.clear();
+  catPanel?.querySelectorAll("input[type=checkbox]").forEach(chk => chk.checked = false);
+  updateCatBtnLabel();
 
   hideSuggest();
   renderGrid(plants);
