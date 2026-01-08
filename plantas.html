@@ -62,11 +62,19 @@
       <div id="fNameSuggest" class="plants-suggest" hidden></div>
     </div>
 
-    <div class="plants-field">
-      <label for="fCats">Categorias</label>
-      <select id="fCats" multiple aria-label="Filtrar por categorias"></select>
-      <small class="plants-hint">Use Ctrl/Cmd para múltiplas.</small>
-    </div>
+<div class="plants-filter">
+  <label class="filter-label">Categorias</label>
+
+  <div class="multi" id="catMulti">
+    <button type="button" class="multi-btn" id="catBtn">
+      Selecione...
+    </button>
+
+    <div class="multi-panel" id="catPanel" hidden></div>
+  </div>
+
+  <small class="small">Selecione uma ou mais.</small>
+</div>
 
     <div class="plants-field">
       <label for="fSci">Nome científico</label>
@@ -312,6 +320,11 @@ const fSci  = document.getElementById("fSci");
 const fCare = document.getElementById("fCare");
 const fClear = document.getElementById("fClear");
 const fCount = document.getElementById("fCount");
+const catBtn = document.getElementById("catBtn");
+const catPanel = document.getElementById("catPanel");
+
+const selectedCats = new Set();
+
 
   // ===== modal scroll lock (opcional) =====
   let scrollY = 0;
@@ -576,6 +589,48 @@ function includesText(hay, needle){
   if (!n) return true;
   return h.includes(n);
 }
+function getCategories(plant){
+  return pick(plant, ["categorias","Categorias"])
+    .split(",")
+    .map(s => s.trim())
+    .filter(Boolean);
+}
+
+function buildCategoryOptions(){
+  const all = new Set();
+  plants.forEach(p => getCategories(p).forEach(c => all.add(c)));
+
+  const cats = Array.from(all).sort((a,b)=>a.localeCompare(b,"pt-BR"));
+
+  catPanel.innerHTML = cats.map(c => `
+    <label class="multi-item">
+      <input type="checkbox" value="${c}">
+      <span>${c}</span>
+    </label>
+  `).join("");
+
+  catPanel.querySelectorAll("input[type=checkbox]").forEach(chk => {
+    chk.addEventListener("change", () => {
+      if (chk.checked) selectedCats.add(chk.value);
+      else selectedCats.delete(chk.value);
+
+      updateCatBtnLabel();
+      applyFilters(); // sua função que filtra e redesenha
+    });
+  });
+
+  updateCatBtnLabel();
+}
+
+function updateCatBtnLabel(){
+  const n = selectedCats.size;
+  catBtn.textContent = n ? `${n} selecionada(s)` : "Selecione...";
+}
+function matchesCategories(p){
+  if (selectedCats.size === 0) return true;
+  const cats = getCategories(p);
+  return cats.some(c => selectedCats.has(c));
+}
 
 function applyFilters(){
   const nameQ = fName?.value || "";
@@ -583,35 +638,15 @@ function applyFilters(){
   const careQ = fCare?.value || "";
   const selectedCats = getSelectedCats();
 
-  const filtered = plants.filter(p => {
-    const titulo = pick(p, ["titulo","Título","nome","Nome"]).trim();
-    const cientifico = pick(p, [
-      "nome científico","nome cientifico","Nome científico","Nome cientifico",
-      "nome_cientifico","nomeCientifico"
-    ]).trim();
+  const filtered = plants.filter(p =>
+  matchesName(p) &&
+  matchesScientific(p) &&
+  matchesCare(p) &&
+  matchesCategories(p)
+);
+renderCards(filtered);
 
-    const cuidados = pick(p, ["cuidados","Cuidados","cuidado","Cuidado"]).trim();
-    const cats = splitCats(pick(p, ["categorias","Categorias"]));
 
-    // nome (match por contains)
-    if (!includesText(titulo, nameQ)) return false;
-
-    // nome científico
-    if (!includesText(cientifico, sciQ)) return false;
-
-    // cuidados
-    if (!includesText(cuidados, careQ)) return false;
-
-    // categorias (se selecionou, precisa conter todas selecionadas)
-    if (selectedCats.length){
-      for (const sc of selectedCats){
-        if (!cats.includes(sc)) return false;
-      }
-    }
-    return true;
-  });
-
-  renderGrid(filtered);
   updateCount(filtered.length);
 }
 
@@ -778,6 +813,18 @@ fClear?.addEventListener("click", () => {
   hideSuggest();
   renderGrid(plants);
   updateCount(plants.length);
+});
+
+
+catBtn.addEventListener("click", () => {
+  const open = !catPanel.hidden;
+  catPanel.hidden = open;
+});
+
+document.addEventListener("click", (e) => {
+  if (!document.getElementById("catMulti")?.contains(e.target)){
+    catPanel.hidden = true;
+  }
 });
 
     // abre por hash

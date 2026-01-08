@@ -404,6 +404,39 @@
   gap: 12px;
   margin-top: 12px;
 }
+.multi { position: relative; width: 100%; }
+.multi-btn{
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  background: #fff;
+  text-align: left;
+}
+.multi-panel{
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  max-height: 240px;
+  overflow: auto;
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  padding: 10px;
+  z-index: 50;
+  box-shadow: 0 12px 30px rgba(0,0,0,.08);
+}
+.multi-item{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 6px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.multi-item:hover{ background: #f6f6f6; }
+.multi-item input{ width: 16px; height: 16px; }
 
 .btn-filter{
   border: 1px solid var(--green-600, #1f7a4a);
