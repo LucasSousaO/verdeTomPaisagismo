@@ -653,22 +653,20 @@ function matchesName(p){
 
 
 function applyFilters(){
-  const nameQ = fName?.value || "";
-  const sciQ  = fSci?.value || "";
-  const careQ = fCare?.value || "";
-  const selectedCats = getSelectedCats();
-
   const filtered = plants.filter(p =>
-  matchesName(p) &&
-  matchesScientific(p) &&
-  matchesCare(p) &&
-  matchesCategories(p)
-);
-renderCards(filtered);
+    matchesName(p) &&
+    matchesScientific(p) &&
+    matchesCare(p) &&
+    matchesCategories(p)
+  );
 
+  renderCards(filtered);
 
-  updateCount(filtered.length);
+  if (fCount){
+    fCount.textContent = `${filtered.length} resultado(s)`;
+  }
 }
+
 
 function updateCount(n){
   if (!fCount) return;
