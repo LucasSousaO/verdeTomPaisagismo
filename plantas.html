@@ -201,7 +201,7 @@
  <script>
 (async function(){
   const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdP_h8M1SSBrqtxsH0j0V6eQ9MN66HX4JhSG0KgP_wyGVZmVAfzMX_J-MFPqc90c54N4vpkjakM0pj/pub?gid=3559854&single=true&output=csv";
-
+let namePool = [];
   // ===== helpers =====
   function pick(obj, keys){
     for (const k of keys){
@@ -757,8 +757,6 @@ function uniqueNames(plantsList){
   });
   return Array.from(set).sort((a,b) => a.localeCompare(b, "pt-BR"));
 }
-
-let namePool = [];
 
 function hideSuggest(){
   if (!fNameSuggest) return;
