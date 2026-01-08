@@ -209,7 +209,12 @@ let namePool = [];
     return "";
   }
   function norm(v){ return String(v || "").trim().toLowerCase(); }
-
+function normText(v){
+  return String(v || "")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
   function slugify(s){
     return String(s || "")
       .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
@@ -630,6 +635,22 @@ function matchesCategories(p){
   const cats = getCategories(p);
   return cats.some(c => selectedCats.has(c));
 }
+function matchesCare(p){
+  const q = normText(fCare?.value);
+  if (!q) return true;
+  return normText(getCare(p)).includes(q);
+}
+function matchesScientific(p){
+  const q = normText(fSci?.value);
+  if (!q) return true;
+  return normText(getScientific(p)).includes(q);
+}
+function matchesName(p){
+  const q = normText(fName?.value);
+  if (!q) return true;
+  return normText(getTitle(p)).includes(q);
+}
+
 
 function applyFilters(){
   const nameQ = fName?.value || "";
@@ -653,6 +674,29 @@ function updateCount(n){
   if (!fCount) return;
   fCount.textContent = `${n} resultado(s)`;
 }
+function getTitle(p){
+  return pick(p, ["titulo","Título","nome","Nome"]);
+}
+
+function getScientific(p){
+  return pick(p, [
+    "nome científico","nome cientifico",
+    "Nome científico","Nome cientifico",
+    "nome_cientifico"
+  ]);
+}
+
+function getCare(p){
+  return pick(p, ["cuidados","Cuidados"]);
+}
+
+function getCategories(p){
+  return pick(p, ["categorias","Categorias"])
+    .split(",")
+    .map(c => c.trim())
+    .filter(Boolean);
+}
+
 
 function renderGrid(list){
   if (!grid) return;
