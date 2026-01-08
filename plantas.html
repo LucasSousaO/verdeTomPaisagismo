@@ -228,6 +228,23 @@ function normText(v){
     return `${base}#${encodeURIComponent(slug)}`;
   }
 
+  function hasActiveFilters(){
+  const hasName = (fName?.value || "").trim().length > 0;
+  const hasSci  = (fSci?.value  || "").trim().length > 0;
+  const hasCare = (fCare?.value || "").trim().length > 0;
+  const hasCats = selectedCats && selectedCats.size > 0;
+
+  return hasName || hasSci || hasCare || hasCats;
+}
+
+function updateClearVisibility(){
+  if (!fClear) return;
+  const show = hasActiveFilters();
+  // use hidden (não precisa de CSS)
+  fClear.hidden = !show;
+}
+
+
   // se você já tem resolveImageSrc no main.js, ele será usado
   // fallback seguro caso não exista
   function isAbsoluteUrl(v){
@@ -658,6 +675,7 @@ function applyFilters(){
   if (fCount){
     fCount.textContent = `${filtered.length} resultado(s)`;
   }
+  updateClearVisibility();
 }
 
 
@@ -847,6 +865,8 @@ fClear?.addEventListener("click", () => {
   hideSuggest();
   renderGrid(plants);
   updateCount(plants.length);
+  updateClearVisibility(); // começa escondido
+
 });
 
 
