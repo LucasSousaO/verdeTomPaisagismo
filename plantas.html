@@ -105,8 +105,8 @@
   <button class="compare-nav compare-nav--prev compare-des" id="prPrevDesktop" type="button" aria-label="Imagem anterior">‹</button>
 
   <div class="compare" id="compareBox">
-  <img id="prAfter" class="compare__img" alt="">
-  <img id="prBefore" class="compare__img compare__before" alt="">
+  <img id="plAfter" class="compare__img" alt="">
+  <img id="plBefore" class="compare__img compare__before" alt="">
   <input id="prRange" class="compare__range" type="range" min="0" max="100" value="50" aria-label="Comparar antes e depois">
   <div class="compare__handle" id="prHandle"></div>
   <div class="compare-count" id="prCount"></div>
@@ -300,8 +300,8 @@ const plPorque     = modal?.querySelector("#plPorque");
 const plCuidados   = modal?.querySelector("#plCuidados");
 const plCientifico = modal?.querySelector("#plCientifico");
 
-const prAfter  = modal?.querySelector("#prAfter");
-const prBefore = modal?.querySelector("#prBefore");
+const plAfter  = modal?.querySelector("#plAfter");
+const plBefore = modal?.querySelector("#plBefore");
   const prRange  = modal?.querySelector("#prRange");
   const prHandle = modal?.querySelector("#prHandle");
   const compareBox = modal?.querySelector("#compareBox");
@@ -344,9 +344,9 @@ const selectedCats = new Set();
 
   // ===== slider single =====
   function setCompare(value){
-    if (!prBefore || !prHandle) return;
+    if (!plBefore || !prHandle) return;
     const v = Math.max(0, Math.min(100, Number(value)));
-    prBefore.style.clipPath = `inset(0 ${100 - v}% 0 0)`;
+    plBefore.style.clipPath = `inset(0 ${100 - v}% 0 0)`;
     prHandle.style.left = `${v}%`;
   }
 
@@ -453,16 +453,16 @@ const selectedCats = new Set();
     slideIndex = Math.max(0, Math.min(slides.length - 1, idx));
     const s = slides[slideIndex];
 
-    if (prAfter){
-      prAfter.src = resolveImg(s.after);
-      prAfter.alt = plTitle?.textContent ? `Imagem - ${plTitle.textContent}` : "Imagem";
-      prAfter.style.clipPath = "none";
+    if (plAfter){
+      plAfter.src = resolveImg(s.after);
+      plAfter.alt = plTitle?.textContent ? `Imagem - ${plTitle.textContent}` : "Imagem";
+      plAfter.style.clipPath = "none";
     }
 
     // modo single (sem antes/depois)
-    if (prBefore){
-      prBefore.src = "";
-      prBefore.style.display = "none";
+    if (plBefore){
+      plBefore.src = "";
+      plBefore.style.display = "none";
     }
     if (prRange)  prRange.style.display  = "none";
     if (prHandle) prHandle.style.display = "none";
@@ -653,7 +653,7 @@ function applyFilters(){
     matchesCategories(p)
   );
 
-  renderCards(filtered);
+  renderGrid(filtered);
 
   if (fCount){
     fCount.textContent = `${filtered.length} resultado(s)`;
@@ -732,6 +732,14 @@ function renderGrid(list){
     `;
   }).join("") || `<p class="small">Nenhum catálogo publicado ainda.</p>`;
 }
+function uniqueNames(plantsList){
+  const set = new Set();
+  plantsList.forEach(p => {
+    const titulo = pick(p, ["titulo","Título","nome","Nome"]).trim();
+    if (titulo) set.add(titulo);
+  });
+  return Array.from(set).sort((a,b) => a.localeCompare(b, "pt-BR"));
+}
 
 function findPlantBySlug(slug){
   const s = decodeURIComponent(String(slug || "")).trim();
@@ -757,19 +765,7 @@ function findPlantBySlug(slug){
     console.log("1a linha exemplo:", raw[0]);
 
     plants = raw.filter(p => norm(pick(p, ["status", "Status", "STATUS"])) === "publicado");
-
-    if (!grid) return;
-
-   buildCatsOptions(plants);
-function uniqueNames(plantsList){
-  const set = new Set();
-  plantsList.forEach(p => {
-    const titulo = pick(p, ["titulo","Título","nome","Nome"]).trim();
-    if (titulo) set.add(titulo);
-  });
-  return Array.from(set).sort((a,b) => a.localeCompare(b, "pt-BR"));
-}
-
+buildCategoryOptions();
 namePool = uniqueNames(plants);
 
 // primeira renderização
