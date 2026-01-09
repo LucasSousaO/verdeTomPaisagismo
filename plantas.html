@@ -52,6 +52,19 @@
   <div class="container">
     <h1>Catálogo</h1>
     <!-- search-->
+     <div class="plants-filters-wrap" id="filtersWrap">
+
+  <button
+    class="plants-filters-toggle"
+    id="filtersToggle"
+    type="button"
+    aria-expanded="false"
+    aria-controls="filtersPanel"
+  >
+    <span>Filtrar catálogo</span>
+    <span class="plants-filters-toggle__hint" id="filtersHint">Oculto</span>
+  </button>
+
  <div class="plants-filters" aria-label="Filtros de plantas">
   <div class="plants-filters__row">
     <div class="plants-field">
@@ -72,7 +85,7 @@
   </div>
 </div>
 
-    <div class="plants-field">
+    <div class="plants-field"></div>
       <label for="fSci">Nome científico</label>
       <input id="fSci" type="text" placeholder="Ex.: Liriope muscari" />
     </div>
@@ -88,7 +101,7 @@
     <div id="fCount" class="plants-count" aria-live="polite"></div>
   </div>
 </div>
-
+</div>
  <!---Fim Search-->
     <div id="plantsGrid" class="plants-grid"></div>
   </div>
@@ -345,6 +358,50 @@ const catBtn = document.getElementById("catBtn");
 const catPanel = document.getElementById("catPanel");
 
 const selectedCats = new Set();
+
+// ===== mobile collapse filtros =====
+const filtersToggle = document.getElementById("filtersToggle");
+const filtersPanel  = document.getElementById("filtersPanel");
+const filtersHint   = document.getElementById("filtersHint");
+
+if (fClear) fClear.hidden = true;
+
+function isMobile(){
+  return window.matchMedia("(max-width: 768px)").matches;
+}
+
+function setFiltersOpen(open){
+  if (!filtersPanel || !filtersToggle) return;
+
+  // no desktop: sempre aberto
+  if (!isMobile()){
+    filtersPanel.hidden = false;
+    filtersToggle.setAttribute("aria-expanded", "true");
+    if (filtersHint) filtersHint.textContent = "Visível";
+    return;
+  }
+
+  // no mobile: controla
+  filtersPanel.hidden = !open;
+  filtersToggle.setAttribute("aria-expanded", open ? "true" : "false");
+  if (filtersHint) filtersHint.textContent = open ? "Visível" : "Oculto";
+}
+
+// fechado no load (mobile)
+setFiltersOpen(false);
+
+// click
+filtersToggle?.addEventListener("click", () => {
+  const open = filtersToggle.getAttribute("aria-expanded") === "true";
+  setFiltersOpen(!open);
+});
+
+// ao redimensionar (mobile <-> desktop)
+window.addEventListener("resize", () => {
+  // mantém coerência quando troca de breakpoint
+  const open = filtersToggle?.getAttribute("aria-expanded") === "true";
+  setFiltersOpen(open);
+});
 
 
   // ===== modal scroll lock (opcional) =====
