@@ -66,13 +66,14 @@ img{ max-width:100%; height:auto; display:block; }
 }
 
 .header-inner{
-  max-width: var(--container);
+  width: 100%;
+  align-self: anchor-center;
   margin: 0 auto;
   padding: 18px var(--pad);
-
+  height: 100%;
+    ustify-items: flex-end;
   display:flex;
   align-items:flex-end;
-  justify-content:space-between;
   gap:12px;
 }
 
