@@ -84,6 +84,7 @@ img{ max-width:100%; height:auto; display:block; }
   padding: 10px;
 }
 .logo img{
+  padding-left: inherit;
   height: 65px;
   width: auto;
 }
