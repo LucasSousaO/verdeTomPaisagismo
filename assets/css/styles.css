@@ -53,6 +53,7 @@ img{ max-width:100%; height:auto; display:block; }
    HEADER (clean + mobile menu)
    ========================= */
 .site-header{
+  display: flex;
   position: sticky;
   top: 0;
   z-index: 30;
@@ -71,9 +72,8 @@ img{ max-width:100%; height:auto; display:block; }
   margin: 0 auto;
   padding: 18px var(--pad);
   height: 100%;
-    ustify-items: flex-end;
+  justify-content: flex-end;
   display:flex;
-  align-items:flex-end;
   gap:12px;
 }
 
@@ -81,6 +81,7 @@ img{ max-width:100%; height:auto; display:block; }
   flex: 0 0 auto;
   display:flex;
   align-items:center;
+  padding: 10px;
 }
 .logo img{
   height: 65px;
