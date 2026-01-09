@@ -71,7 +71,7 @@ img{ max-width:100%; height:auto; display:block; }
   padding: 18px var(--pad);
 
   display:flex;
-  align-items:center;
+  align-items:flex-end;
   justify-content:space-between;
   gap:12px;
 }
@@ -767,6 +767,15 @@ body.modal-open{
   .main-nav a{
     padding: 10px 8px;
     font-size: 1rem;
+    display: flex;              /* garante área inteira clicável */
+    width: 100%;
+    box-sizing: border-box;
+
+    align-items: center;        /* alinha o texto verticalmente */
+    justify-content: center;    /* center (troque para flex-start se quiser à esquerda) */
+
+    padding: 14px 16px;         /* aumenta hit area */
+    text-align: center;         /* garante alinhamento do texto */
   }
 
   /* Ajuste hero fold */
