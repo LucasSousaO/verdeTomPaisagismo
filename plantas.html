@@ -70,8 +70,9 @@
 
     <div class="multi-panel" id="catPanel" hidden></div>
   </div>
+</div>
 
-    <div class="plants-field"></div>
+    <div class="plants-field">
       <label for="fSci">Nome científico</label>
       <input id="fSci" type="text" placeholder="Ex.: Liriope muscari" />
     </div>
@@ -87,7 +88,7 @@
     <div id="fCount" class="plants-count" aria-live="polite"></div>
   </div>
 </div>
-</div>
+
  <!---Fim Search-->
     <div id="plantsGrid" class="plants-grid"></div>
   </div>
@@ -344,6 +345,7 @@ const catBtn = document.getElementById("catBtn");
 const catPanel = document.getElementById("catPanel");
 
 const selectedCats = new Set();
+
 
   // ===== modal scroll lock (opcional) =====
   let scrollY = 0;
