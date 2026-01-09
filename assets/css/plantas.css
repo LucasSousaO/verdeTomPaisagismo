@@ -397,7 +397,6 @@
 
 .plants-filters__actions{
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 12px;
   margin-top: 12px;
