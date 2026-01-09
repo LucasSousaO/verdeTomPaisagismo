@@ -157,7 +157,7 @@
   background: linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,.7), rgba(255,255,255,0));
 }
 .project-modal__info{
-  padding-bottom: 84px; /* reserva espaço pra não colidir com nada no fundo */
+  padding-bottom: 20px; /* reserva espaço pra não colidir com nada no fundo */
 }
 .project-share__btn{
   display:inline-flex;
