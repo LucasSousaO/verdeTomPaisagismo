@@ -631,6 +631,7 @@ body.modal-open{
   gap: 10px;
   flex-wrap: wrap;
   margin: 10px 0 16px;
+  justify-content: flex-end;
 }
 .share-actions .cta{
   font-size:12px;
