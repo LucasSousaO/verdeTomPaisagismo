@@ -104,14 +104,14 @@ img{ max-width:100%; height:auto; display:block; }
   position: relative;
   white-space: nowrap;
 }
-.main-nav a.is-active::after{
+.main-nav a.is-active::before{
   content: "";
   position: absolute;
-  left: 8px;
-  right: 8px;
+  left: 0;
+  right: 0;
   bottom: -6px;
-  height: 2px;
-  background: currentColor;
+  height: 1px;
+  background-color: #1f3d2b;
   border-radius: 2px;
 }
 .main-nav a::after{
