@@ -104,6 +104,16 @@ img{ max-width:100%; height:auto; display:block; }
   position: relative;
   white-space: nowrap;
 }
+.main-nav a.is-active::after{
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: -6px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+}
 .main-nav a::after{
   content:"";
   position:absolute;
