@@ -534,6 +534,9 @@
 }
 
 @media (max-width: 768px){
+   .plants-field--sci {
+    display: none !important;
+  }
  .compare{ 
       aspect-ratio: 4 / 3; 
   }
