@@ -480,7 +480,9 @@ overflow: hidden;
 .post-modal{
   height: 100%;
   display: grid;
-  grid-template-rows: 280px 1fr; /* hero fixo + conteúdo */
+  grid-template-rows: 380px 1fr; /* changed from 280 to 380*/
+    overflow-y: auto;       /* ✅ scroll só aqui */
+  -webkit-overflow-scrolling: touch;
 }
 
 /* hero */
@@ -497,8 +499,6 @@ overflow: hidden;
 
 /* conteúdo com scroll */
 .post-content{
-  overflow-y: auto;       /* ✅ scroll só aqui */
-  -webkit-overflow-scrolling: touch;
   padding: 20px 22px 26px;
 }
 
