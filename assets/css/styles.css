@@ -464,7 +464,8 @@ overflow: hidden;
   -webkit-overflow-scrolling: touch;
 }
 .post-content{
-
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .modal-inner{
   width: min(980px, 100%);
@@ -657,10 +658,11 @@ body.modal-open{
 @media (min-width: 900px){
 .modal-inner{
     height: min(90vh, 820px);
-    overflow-y: auto;       /* ✅ scroll só aqui */
-  -webkit-overflow-scrolling: touch;
   }
-
+  .post-modal{
+    grid-template-columns: 1fr;
+    grid-template-rows: 220px 1fr;
+  }
   .post-modal__image{
     height: 220px;
   }
