@@ -480,7 +480,9 @@ overflow: hidden;
 .post-modal{
   height: 100%;
   display: grid;
-  grid-template-rows: 280px 1fr; /* hero fixo + conteúdo */
+  grid-template-rows: 380px 1fr; /* changed from 280 to 380*/
+    overflow-y: auto;       /* ✅ scroll só aqui */
+  -webkit-overflow-scrolling: touch;
 }
 
 /* hero */
@@ -497,8 +499,6 @@ overflow: hidden;
 
 /* conteúdo com scroll */
 .post-content{
-  overflow-y: auto;       /* ✅ scroll só aqui */
-  -webkit-overflow-scrolling: touch;
   padding: 20px 22px 26px;
 }
 
@@ -531,7 +531,7 @@ overflow: hidden;
 
 /* botão fechar */
 .modal-close{
-  position: fixed;
+  position: absolute;
   top: 14px;
   right: 14px;
   z-index: 1000;
@@ -658,10 +658,6 @@ body.modal-open{
 @media (min-width: 900px){
 .modal-inner{
     height: min(90vh, 820px);
-  }
-  .post-modal{
-    grid-template-columns: 1fr;
-    grid-template-rows: 220px 1fr;
   }
   .post-modal__image{
     height: 220px;
