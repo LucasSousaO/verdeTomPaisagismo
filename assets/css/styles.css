@@ -232,9 +232,10 @@ img{ max-width:100%; height:auto; display:block; }
   min-height: 100vh;
   display:flex;
   align-items:center;
-  position: relative;
-  background: center / cover no-repeat url("assets/plantas/ALISSO.webp");
-  color: #fff;
+  background-image: url("assets/plantas/ALISSO.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 .hero-inner{
   text-align:center;
