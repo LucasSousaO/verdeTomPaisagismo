@@ -194,6 +194,7 @@ img{ max-width:100%; height:auto; display:block; }
   font-size: clamp(1.9rem, 3.2vw, 3rem);
   line-height:1.1;
   margin:10px 0 12px;
+  colro: white;
 }
 .hero p{
   margin:0 0 14px;
@@ -232,7 +233,7 @@ img{ max-width:100%; height:auto; display:block; }
   min-height: 100vh;
   display:flex;
   align-items:center;
-  background-image: url("assets/blog/grama-amendoim.webp");
+  background-image: url("https://lucassousao.github.io/verdeTomPaisagismo/assets/images/blog/grama-amendoim.webp");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
