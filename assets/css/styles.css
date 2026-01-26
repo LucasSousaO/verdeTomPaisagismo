@@ -243,6 +243,7 @@ img{ max-width:100%; height:auto; display:block; }
   width:100%;
 }
 .hero-inner h1{
+  color: white;
   margin:0;
   font-size: clamp(2.2rem, 4vw, 4.2rem);
   line-height:1.1;
