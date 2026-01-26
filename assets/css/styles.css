@@ -445,7 +445,7 @@ textarea{ min-height:120px; resize:vertical; }
   color:var(--muted);
 }
 .highlight-green{
-  background-color: #2f7d32; /* verde */
+  background-color: var(--brand)
   color: #fff;
   padding: 0.15em 0.35em;
   border-radius: 4px; /* opcional */
